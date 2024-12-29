@@ -1,118 +1,58 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import firebase from '@react-native-firebase/app';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import LoginScreen from "./src/screens/auth/LoginScreen";
+import SignupScreen from "./src/screens/auth/SignupScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import ChargerDetailsScreen from "./src/screens/ChargerDetailsScreen";
+import ChargingScreen from "./src/screens/ChargingScreen";
+import PaymentScreen from "./src/screens/payment/PaymentScreen";
+import PaymentOptionsScreen from "./src/screens/payment/PaymentOptionsScreen";
+import PaymentPixScreen from "./src/screens/payment/PaymentPixScreen";
+import PaymentCardScreen from "./src/screens/PaymentCardScreen";
+import SavedCardsScreen from "./src/screens/SavedCardsScreen";
+import ProfileScreen from "./src/screens/profile/ProfileScreen";
+import CardListScreen from "./src/screens/profile/CardListScreen";
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+const Stack = createStackNavigator();
+
+const App = () => {
+  useEffect(() => {
+    console.log("Firebase initialized:", firebase.apps.length > 0);
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+      <NavigationContainer>
+          <Stack.Navigator
+              screenOptions={{
+                  headerShown: false,
+              }}
+          >
+              <Stack.Screen name={"WELCOME"} component={WelcomeScreen} />
+              <Stack.Screen name={"LOGIN"} component={LoginScreen} />
+              <Stack.Screen name="SIGNUP" component={SignupScreen} />
+              <Stack.Screen name="HOME" component={HomeScreen} />
+              <Stack.Screen name="CHARGER" component={ChargerDetailsScreen} />
+              <Stack.Screen name="CHARGING" component={ChargingScreen} />
+              <Stack.Screen name="Payment" component={PaymentScreen} />
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+              <Stack.Screen name="PaymentOptions" component={PaymentOptionsScreen} />
+              <Stack.Screen name="PaymentPix" component={PaymentPixScreen} />
+              <Stack.Screen name="PaymentCard" component={PaymentCardScreen} />
+              <Stack.Screen name="SavedCards" component={SavedCardsScreen} />
+              <Stack.Screen name="PROFILE" component={ProfileScreen} />
+
+              <Stack.Screen name="CARDLIST" component={CardListScreen} />
+          </Stack.Navigator>
+      </NavigationContainer>
+  );
+};
 
 export default App;
