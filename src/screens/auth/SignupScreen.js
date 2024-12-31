@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-// import firestore from '@react-native-firebase/firestore';
+ import firestore from '@react-native-firebase/firestore';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../../utils/colors";
@@ -24,23 +24,25 @@ const SignupScreen = () => {
 
     const signup = async () => {
 
-        navigation.navigate("LOGIN");
+        // navigation.navigate("LOGIN");
 
-        // try {
-        //     const usersCollection = firestore().collection('users');
-        //     const userSnapshot = await usersCollection.where('email', '==', email).get();
-        //
-        //     if (!userSnapshot.empty) {
-        //         Alert.alert('Erro', 'Usuário já cadastrado');
-        //     } else {
-        //         await usersCollection.add({ email, password });
-        //         Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
-        //         navigation.navigate("LOGIN");
-        //     }
-        // } catch (error) {
-        //     console.error('Erro ao cadastrar usuário:', error);
-        //     Alert.alert('Erro', 'Não foi possível cadastrar o usuário');
-        // }
+        console.log('email:', email);
+
+        try {
+            const usersCollection = firestore().collection('users');
+            const userSnapshot = await usersCollection.where('email', '==', email).get();
+
+            if (!userSnapshot.empty) {
+                Alert.alert('Erro', 'Usuário já cadastrado');
+            } else {
+                await usersCollection.add({ email, password });
+                Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
+                navigation.navigate("LOGIN");
+            }
+        } catch (error) {
+            console.error('Erro ao cadastrar usuário:', error);
+            Alert.alert('Erro', 'Não foi possível cadastrar o usuário');
+        }
     };
 
     return (

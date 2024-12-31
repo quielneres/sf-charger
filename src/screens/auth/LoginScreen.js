@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-// import firestore from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../../utils/colors";
@@ -20,22 +20,22 @@ const LoginScreen = () => {
 
     const login = async () => {
 
-        navigation.navigate("HOME");
+        // navigation.navigate("HOME");
 
 
-        // try {
-        //     const usersCollection = firestore().collection('users');
-        //     const userSnapshot = await usersCollection.where('email', '==', email).where('password', '==', password).get();
-        //
-        //     if (!userSnapshot.empty) {
-        //         navigation.navigate("HOME");
-        //     } else {
-        //         Alert.alert('Erro', 'Email ou senha incorretos');
-        //     }
-        // } catch (error) {
-        //     console.error('Erro ao fazer login:', error);
-        //     Alert.alert('Erro', 'Não foi possível fazer login');
-        // }
+        try {
+            const usersCollection = firestore().collection('users');
+            const userSnapshot = await usersCollection.where('email', '==', email).where('password', '==', password).get();
+
+            if (!userSnapshot.empty) {
+                navigation.navigate("HOME");
+            } else {
+                Alert.alert('Erro', 'Email ou senha incorretos');
+            }
+        } catch (error) {
+            console.error('Erro ao fazer login:', error);
+            Alert.alert('Erro', 'Não foi possível fazer login');
+        }
     };
 
     return (

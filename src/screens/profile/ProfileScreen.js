@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+    import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import firestore from '@react-native-firebase/firestore';
 import { colors } from "../../utils/colors";
 import { fonts } from "../../utils/fonts";
 
@@ -13,8 +14,9 @@ const ProfileScreen = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const storedUsers = await AsyncStorage.getItem('users');
-                const users = storedUsers ? JSON.parse(storedUsers) : [];
+                const usersCollection = firestore().collection('users');
+                const userSnapshot = await usersCollection.get();
+                const users = userSnapshot.docs.map(doc => doc.data());
                 // Supondo que o primeiro usuário seja o logado
                 setUser(users[0]);
             } catch (error) {
@@ -37,31 +39,25 @@ const ProfileScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-                <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
-            </TouchableOpacity>
-            <View style={styles.textContainer}>
-                <Text style={styles.headingText}>Perfil</Text>
+      <View style={styles.container}>
+          <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+              <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
+          </TouchableOpacity>
+          <View style={styles.textContainer}>
+              <Text style={styles.headingText}>Perfil</Text>
+          </View>
+          {user ? (
+            <View style={styles.profileContainer}>
+                <Text style={styles.label}>Email:</Text>
+                <Text style={styles.value}>{user.email}</Text>
+                <TouchableOpacity style={styles.logoutButtonWrapper} onPress={handleLogout}>
+                    <Text style={styles.logoutText}>Logout</Text>
+                </TouchableOpacity>
             </View>
-            {user ? (
-                <View style={styles.profileContainer}>
-                    <Text style={styles.label}>Email:</Text>
-                    <Text style={styles.value}>{user.email}</Text>
-                    <TouchableOpacity style={styles.logoutButtonWrapper} onPress={handleLogout}>
-                        <Text style={styles.logoutText}>Logout</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.cardListButtonWrapper}
-                        onPress={() => navigation.navigate('CARDLIST')}
-                    >
-                        <Text style={styles.cardListButtonText}>Meus Cartões</Text>
-                    </TouchableOpacity>
-                </View>
-            ) : (
-                <Text>Carregando...</Text>
-            )}
-        </View>
+          ) : (
+            <Text>Carregando...</Text>
+          )}
+      </View>
     );
 };
 
@@ -114,17 +110,5 @@ const styles = StyleSheet.create({
         fontFamily: fonts.SemiBold,
         textAlign: "center",
         padding: 10,
-    },
-    cardListButtonWrapper: {
-        backgroundColor: colors.secondary,
-        borderRadius: 7,
-        marginTop: 20,
-        padding: 15,
-        alignItems: 'center',
-    },
-    cardListButtonText: {
-        color: colors.white,
-        fontSize: 20,
-        fontFamily: fonts.SemiBold,
     },
 });
