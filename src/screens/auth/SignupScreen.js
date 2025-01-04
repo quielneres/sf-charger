@@ -10,6 +10,7 @@ import { fonts } from "../../utils/fonts";
 
 const SignupScreen = () => {
     const navigation = useNavigation();
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [secureEntry, setSecureEntry] = useState(true);
@@ -24,10 +25,6 @@ const SignupScreen = () => {
 
     const signup = async () => {
 
-        // navigation.navigate("LOGIN");
-
-        console.log('email:', email);
-
         try {
             const usersCollection = firestore().collection('users');
             const userSnapshot = await usersCollection.where('email', '==', email).get();
@@ -35,7 +32,7 @@ const SignupScreen = () => {
             if (!userSnapshot.empty) {
                 Alert.alert('Erro', 'Usuário já cadastrado');
             } else {
-                await usersCollection.add({ email, password });
+                await usersCollection.add({ name, email, password });
                 Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
                 navigation.navigate("LOGIN");
             }
@@ -54,6 +51,16 @@ const SignupScreen = () => {
                 <Text style={styles.headingText}>Vamos começar</Text>
             </View>
             <View style={styles.formContainer}>
+                <View style={styles.inputContainer}>
+                    <Ionicons name={"person-outline"} size={30} color={colors.secondary} />
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Entre com seu nome"
+                      placeholderTextColor={colors.secondary}
+                      value={name}
+                      onChangeText={setName}
+                    />
+                </View>
                 <View style={styles.inputContainer}>
                     <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
                     <TextInput

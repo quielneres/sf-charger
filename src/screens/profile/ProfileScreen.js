@@ -1,4 +1,4 @@
-    import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -6,10 +6,14 @@ import { useNavigation } from "@react-navigation/native";
 import firestore from '@react-native-firebase/firestore';
 import { colors } from "../../utils/colors";
 import { fonts } from "../../utils/fonts";
+import {AuthContext} from '../../context/AuthContext';
 
 const ProfileScreen = () => {
     const navigation = useNavigation();
     const [user, setUser] = useState(null);
+
+    const {isLoggedIn} = useContext(AuthContext);
+
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -17,15 +21,14 @@ const ProfileScreen = () => {
                 const usersCollection = firestore().collection('users');
                 const userSnapshot = await usersCollection.get();
                 const users = userSnapshot.docs.map(doc => doc.data());
-                // Supondo que o primeiro usuário seja o logado
                 setUser(users[0]);
             } catch (error) {
                 console.error('Erro ao buscar usuário:', error);
             }
         };
-
         fetchUser();
     }, []);
+
 
     const handleLogout = async () => {
         try {
@@ -46,10 +49,19 @@ const ProfileScreen = () => {
           <View style={styles.textContainer}>
               <Text style={styles.headingText}>Perfil</Text>
           </View>
-          {user ? (
+          {isLoggedIn ? (
             <View style={styles.profileContainer}>
+                <Text style={styles.label}>Nome:</Text>
+                <Text style={styles.value}>{user?.name}</Text>
                 <Text style={styles.label}>Email:</Text>
-                <Text style={styles.value}>{user.email}</Text>
+                <Text style={styles.value}>{user?.email}</Text>
+
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("EDIT_PROFILE", { email: user?.email })}
+                >
+                    <Text style={styles.label}>Editar perfil</Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity style={styles.logoutButtonWrapper} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Logout</Text>
                 </TouchableOpacity>

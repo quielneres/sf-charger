@@ -1,8 +1,8 @@
-// src/screens/auth/LoginScreen.js
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import { colors } from "../../utils/colors";
@@ -19,15 +19,13 @@ const LoginScreen = () => {
     };
 
     const login = async () => {
-
-        // navigation.navigate("HOME");
-
-
         try {
             const usersCollection = firestore().collection('users');
             const userSnapshot = await usersCollection.where('email', '==', email).where('password', '==', password).get();
 
             if (!userSnapshot.empty) {
+                const userData = userSnapshot.docs[0].data();
+                await AsyncStorage.setItem('user', JSON.stringify(userData));
                 navigation.navigate("HOME");
             } else {
                 Alert.alert('Erro', 'Email ou senha incorretos');
@@ -39,58 +37,58 @@ const LoginScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-                <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
-            </TouchableOpacity>
-            <View style={styles.textContainer}>
-                <Text style={styles.headingText}>Olá,</Text>
-                <Text style={styles.headingText}>Bem-vindo</Text>
-            </View>
-            <View style={styles.formContainer}>
-                <View style={styles.inputContainer}>
-                    <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Entre com seu e-mail"
-                        placeholderTextColor={colors.secondary}
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder="Entre com sua senha"
-                        placeholderTextColor={colors.secondary}
-                        secureTextEntry={secureEntry}
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-                    <TouchableOpacity onPress={() => setSecureEntry(!secureEntry)}>
-                        <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity>
-                    <Text style={styles.forgotPasswordText}>Esqueceu a Senha?</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.loginButtonWrapper} onPress={login}>
-                    <Text style={styles.loginText}>Entrar</Text>
-                </TouchableOpacity>
-                <Text style={styles.continueText}>ou continue com</Text>
-                <TouchableOpacity style={styles.googleButtonContainer}>
-                    <Text style={styles.googleText}>Google</Text>
-                </TouchableOpacity>
-                <View style={styles.footerContainer}>
-                    <Text style={styles.accountText}>Não tem uma conta?</Text>
-                    <TouchableOpacity onPress={handleSignup}>
-                        <Text style={styles.signupText}>Cadastre-se</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </View>
+      <View style={styles.container}>
+          <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
+              <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
+          </TouchableOpacity>
+          <View style={styles.textContainer}>
+              <Text style={styles.headingText}>Olá,</Text>
+              <Text style={styles.headingText}>Bem-vindo</Text>
+          </View>
+          <View style={styles.formContainer}>
+              <View style={styles.inputContainer}>
+                  <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Entre com seu e-mail"
+                    placeholderTextColor={colors.secondary}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={setEmail}
+                  />
+              </View>
+              <View style={styles.inputContainer}>
+                  <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Entre com sua senha"
+                    placeholderTextColor={colors.secondary}
+                    secureTextEntry={secureEntry}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <TouchableOpacity onPress={() => setSecureEntry(!secureEntry)}>
+                      <SimpleLineIcons name={"eye"} size={20} color={colors.secondary} />
+                  </TouchableOpacity>
+              </View>
+              <TouchableOpacity>
+                  <Text style={styles.forgotPasswordText}>Esqueceu a Senha?</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.loginButtonWrapper} onPress={login}>
+                  <Text style={styles.loginText}>Entrar</Text>
+              </TouchableOpacity>
+              <Text style={styles.continueText}>ou continue com</Text>
+              <TouchableOpacity style={styles.googleButtonContainer}>
+                  <Text style={styles.googleText}>Google</Text>
+              </TouchableOpacity>
+              <View style={styles.footerContainer}>
+                  <Text style={styles.accountText}>Não tem uma conta?</Text>
+                  <TouchableOpacity onPress={handleSignup}>
+                      <Text style={styles.signupText}>Cadastre-se</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
+      </View>
     );
 };
 

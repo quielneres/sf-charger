@@ -1,59 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import React, {useEffect, useState, useContext} from 'react';
+import {View, Text, Button, StyleSheet, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useNavigation} from "@react-navigation/native";
-import BackButton from "../../components/BackButton";
+import {useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../../context/AuthContext';
+import BackButton from '../../components/BackButton';
+import LoadingIndicator from '../../components/LoadingIndicator';
+import {commonStyles} from '../../styles/commonStyles';
 
+const PaymentOptionsScreen = ({route}) => {
+  const {chargerInfo} = route.params;
+  const [hasSavedCard, setHasSavedCard] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+  const {isLoggedIn} = useContext(AuthContext);
 
-const PaymentOptionsScreen = ({  route }) => {
-    const { chargerInfo } = route.params;
-    const [hasSavedCard, setHasSavedCard] = useState(false);
-    const navigation = useNavigation();
+  useEffect(() => {
+    const checkSavedCards = async () => {
+      try {
+        const savedCards = await AsyncStorage.getItem('savedCards');
+        setHasSavedCard(savedCards !== null);
+      } catch (error) {
+        console.error('Error checking saved cards:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkSavedCards();
+  }, []);
 
+  const handleAddCard = () => {
+    if (isLoggedIn) {
+      navigation.navigate('CreateCard', {chargerInfo});
+    } else {
+      navigation.navigate('LOGIN');
+    }
+  };
 
-    // Verifica se há cartões salvos
-    useEffect(() => {
-        const checkSavedCards = async () => {
-            const savedCards = await AsyncStorage.getItem('savedCards');
-            setHasSavedCard(savedCards !== null);
-        };
-        checkSavedCards();
-    }, []);
+  if (loading) {
+    return <LoadingIndicator />;
+  }
 
-    return (
-        <View style={styles.container}>
-            <BackButton />
+  return (
+    <View style={commonStyles.container}>
+      <BackButton />
+      <Text style={commonStyles.title}>Escolha o método de pagamento:</Text>
 
-            <Text style={styles.title}>Escolha o método de pagamento:</Text>
-            <Button
-                title="Pagar com PIX"
-                onPress={() => navigation.navigate('PaymentPix', { chargerInfo })}
-            />
-            {hasSavedCard && (
-                <Button
-                    title="Pagar com Cartão Salvo"
-                    onPress={() => navigation.navigate('SavedCards', { chargerInfo })}
-                />
-            )}
-            <Button
-                title="Cadastrar Novo Cartão"
-                onPress={() => navigation.navigate('PaymentCard', { chargerInfo })}
-            />
-        </View>
-    );
+      <TouchableOpacity
+        style={commonStyles.buttonWrapper}
+        onPress={() => navigation.navigate('PaymentPix', {chargerInfo})}>
+        <Text style={commonStyles.buttonText}>Pagar com PIX</Text>
+      </TouchableOpacity>
+
+      {hasSavedCard && (
+
+        <TouchableOpacity
+          style={commonStyles.buttonWrapper}
+          onPress={() => navigation.navigate('SavedCards', { chargerInfo })}>
+          <Text style={commonStyles.buttonText}>Pagar com Cartão Salvo</Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity
+        style={commonStyles.buttonWrapper}
+        onPress={handleAddCard}>
+        <Text style={commonStyles.buttonText}>Cadastrar Novo Cartão</Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#F9F9F9',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-});
 
 export default PaymentOptionsScreen;

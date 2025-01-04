@@ -1,11 +1,20 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, {useContext, useEffect} from 'react';
 import { colors } from "../utils/colors";
 import { fonts } from "../utils/fonts";
 import { useNavigation } from "@react-navigation/native";
+import {AuthContext} from '../context/AuthContext';
 
 const WelcomeScreen = () => {
+
     const navigation = useNavigation();
+    const {isLoggedIn} = useContext(AuthContext);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigation.navigate("HOME");
+        }
+    }, [isLoggedIn, navigation]);
 
     const handleLogin = () => {
         navigation.navigate("LOGIN");
@@ -19,10 +28,15 @@ const WelcomeScreen = () => {
             <Image source={require("../assets/logo.png")} style={styles.logo} />
             <Image source={require("../assets/man.png")} style={styles.bannerImage} />
             <Text style={styles.title}>Lorem ipsum dolor.</Text>
-            <Text style={styles.subTitle}>
-                Lorem ssssipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore
-            </Text>
+            <TouchableOpacity
+                onPress={() => navigation.navigate("HOME")}
+            >
+                <Text style={styles.subTitle}>
+                    Continuar sem login
+                </Text>
+            </TouchableOpacity>
+
+
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
                     style={[
@@ -31,13 +45,13 @@ const WelcomeScreen = () => {
                     ]}
                     onPress={handleLogin}
                 >
-                    <Text style={styles.loginButtonText}>Login</Text>
+                    <Text style={styles.loginButtonText}>Entrar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.loginButtonWrapper]}
                     onPress={handleSignup}
                 >
-                    <Text style={styles.signupButtonText}>Sign-up</Text>
+                    <Text style={styles.signupButtonText}>Cadastra-se</Text>
                 </TouchableOpacity>
             </View>
         </View>
