@@ -20,6 +20,7 @@ import SavedCardsScreen from "./src/screens/profile/SavedCardsScreen";
 import ProfileScreen from "./src/screens/profile/ProfileScreen";
 import CardListScreen from "./src/screens/profile/CardListScreen";
 import EditProfileScreen from './src/screens/profile/EditProfileScreen';
+import DetailPaymentScreen from './src/screens/payment/DetailPaymentScreen';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,7 @@ const App = () => {
           <Stack.Screen name="PaymentPix" component={PaymentPixScreen} />
           <Stack.Screen name="CreateCard" component={CreateCardScreen} />
           <Stack.Screen name="SavedCards" component={SavedCardsScreen} />
+          <Stack.Screen name="DetailPayment" component={DetailPaymentScreen} />
           <Stack.Screen name="PROFILE" component={ProfileScreen} />
           <Stack.Screen name="CARDLIST" component={CardListScreen} />
           <Stack.Screen name="EDIT_PROFILE" component={EditProfileScreen} />
