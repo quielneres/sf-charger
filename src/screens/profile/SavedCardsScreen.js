@@ -29,8 +29,9 @@ const SavedCardsScreen = ({ navigation, route }) => {
     }, [user.email]);
 
     const handlePayment = (card) => {
-        Alert.alert('Pagamento Confirmado!', `Cartão: **** **** **** ${card.cardNumber.slice(-4)}`);
-        navigation.navigate('PaymentOptions', { chargerInfo });
+        // Alert.alert('Pagamento Confirmado!', `Cartão: **** **** **** ${card.cardNumber.slice(-4)}`);
+        const detailsPayment = { ...chargerInfo, paymentType: 'creditCard', card };
+        navigation.navigate('DetailPayment', { detailsPayment });
     };
 
     return (
