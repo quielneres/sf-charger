@@ -11,7 +11,7 @@ import React, {useContext, useState} from 'react';
 import {colors} from '../utils/colors';
 import {fonts} from '../utils/fonts';
 import {useNavigation} from '@react-navigation/native';
-// import MapScreen from "./MapScreen";
+import MapScreen from "./MapScreen";
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackButton from '../components/BackButton';
@@ -64,12 +64,12 @@ const HomeScreen = () => {
 
       {/* Componente de Mapa */}
       <View style={styles.mapContainer}>
-        {/*<MapScreen/>*/}
+        <MapScreen/>
 
-        <Button
-          title="Ir para o Crrgeador"
-          onPress={() => navigation.navigate('CHARGER', {chargerInfo})}
-        />
+        {/*<Button*/}
+        {/*  title="Ir para o Crrgeador"*/}
+        {/*  onPress={() => navigation.navigate('CHARGER', {chargerInfo})}*/}
+        {/*/>*/}
       </View>
 
       {/* Rodapé */}

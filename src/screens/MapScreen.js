@@ -18,8 +18,8 @@ const MapScreen = () => {
     const navigation = useNavigation();
 
 
-    const handleMarkerPress = (charger) => {
-        navigation.navigate('CHARGER', { charger });
+    const handleMarkerPress = (chargerInfo) => {
+        navigation.navigate('CHARGER', { chargerInfo });
     };
 
     return (
