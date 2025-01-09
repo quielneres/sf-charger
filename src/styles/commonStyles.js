@@ -5,8 +5,8 @@ import { fonts } from '../utils/fonts';
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: colors.background || '#F9F9F9',
+    // padding: 20,
+    backgroundColor: colors.background || '#f5f5f5',
   },
   title: {
     fontSize: 24,
