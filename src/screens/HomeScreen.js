@@ -1,29 +1,20 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  Button,
-} from 'react-native';
-import React, {useContext, useState} from 'react';
-import {colors} from '../utils/colors';
-import {fonts} from '../utils/fonts';
-import {useNavigation} from '@react-navigation/native';
-import MapScreen from "./MapScreen";
-
+// src/screens/HomeScreen.js
+import React, { useContext, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Button } from 'react-native';
+import { colors } from '../utils/colors';
+import { fonts } from '../utils/fonts';
+import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BackButton from '../components/BackButton';
-import {AuthContext} from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
+import BottomMenu from './layout/BottomMenu';
+import MapView from 'react-native-maps';
+import MapScreen from './MapScreen';
 
 const HomeScreen = () => {
-  const {isLoggedIn} = useContext(AuthContext);
-
-  const [activeTab, setActiveTab] = useState('map'); // Estado para tab ativa
+  const { isLoggedIn } = useContext(AuthContext);
+  const [activeTab, setActiveTab] = useState('map');
   const navigation = useNavigation();
-
-  console.log('home isLoggedIn', isLoggedIn);
 
   const chargerInfo = {
     id: 2,
@@ -39,10 +30,9 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Cabeçalho */}
       <View style={styles.header}>
         <BackButton />
-        <Text style={styles.logo}>Sol Fort</Text>
+        {/*<Text style={styles.logo}>Sol Fort</Text>*/}
         <View style={styles.icons}>
           <TouchableOpacity>
             <Icon name="mail-outline" size={24} color="#000" />
@@ -53,7 +43,6 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* Barra de Pesquisa */}
       <View style={styles.searchBar}>
         <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput placeholder="Pesquisar" style={styles.input} />
@@ -62,99 +51,31 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Componente de Mapa */}
-      <View style={styles.mapContainer}>
-        <MapScreen/>
+      <MapScreen />
 
-        {/*<Button*/}
-        {/*  title="Ir para o Crrgeador"*/}
-        {/*  onPress={() => navigation.navigate('CHARGER', {chargerInfo})}*/}
-        {/*/>*/}
-      </View>
+      {/*<View style={styles.mapContainer}>*/}
+      {/*  <Button*/}
+      {/*    title="Ir para o Carregador"*/}
+      {/*    onPress={() => navigation.navigate('PaymentOptions', { chargerInfo })}*/}
+      {/*  />*/}
+      {/*</View>*/}
 
-      {/* Rodapé */}
       <View style={styles.footer}>
         <View style={styles.legend}>
-          <View style={[styles.dot, {backgroundColor: 'green'}]} />
+          <View style={[styles.dot, { backgroundColor: 'green' }]} />
           <Text>Disponível</Text>
-          <View style={[styles.dot, {backgroundColor: 'blue'}]} />
+          <View style={[styles.dot, { backgroundColor: 'blue' }]} />
           <Text>Rápido</Text>
-          <View style={[styles.dot, {backgroundColor: 'red'}]} />
+          <View style={[styles.dot, { backgroundColor: 'red' }]} />
           <Text>Em uso</Text>
-          <View style={[styles.dot, {backgroundColor: 'black'}]} />
+          <View style={[styles.dot, { backgroundColor: 'black' }]} />
           <Text>Em Manutenção</Text>
-          <View style={[styles.dot, {backgroundColor: 'gray'}]} />
+          <View style={[styles.dot, { backgroundColor: 'gray' }]} />
           <Text>Não contactados</Text>
         </View>
       </View>
 
-      {/* Menu Inferior */}
-      <View style={styles.bottomMenu}>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => setActiveTab('map')}>
-          <Icon
-            name="map-outline"
-            size={24}
-            color={activeTab === 'map' ? '#007AFF' : '#808080'}
-          />
-          <Text
-            style={[styles.menuText, activeTab === 'map' && styles.activeText]}>
-            Mapa
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => setActiveTab('battery')}>
-          <Icon
-            name="battery-charging-outline"
-            size={24}
-            color={activeTab === 'battery' ? '#007AFF' : '#808080'}
-          />
-          <Text
-            style={[
-              styles.menuText,
-              activeTab === 'battery' && styles.activeText,
-            ]}>
-            Bateria
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={handleLogin}>
-          <Icon
-            name="person-outline"
-            size={24}
-            color={activeTab === 'profile' ? '#007AFF' : '#808080'}
-          />
-          <Text
-            style={[
-              styles.menuText,
-              activeTab === 'profile' && styles.activeText,
-            ]}>
-            Perfil
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => setActiveTab('qr-code')}>
-          <Icon
-            name="qr-code-outline"
-            size={24}
-            color={activeTab === 'qr-code' ? '#007AFF' : '#808080'}
-          />
-          <Text
-            style={[
-              styles.menuText,
-              activeTab === 'qr-code' && styles.activeText,
-            ]}>
-            QR Code
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <BottomMenu activeTab={activeTab} setActiveTab={setActiveTab} handleLogin={handleLogin} />
     </View>
   );
 };
@@ -196,7 +117,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     flex: 1,
-    backgroundColor: '#eee', // Placeholder para o mapa
+    backgroundColor: '#eee',
   },
   footer: {
     padding: 16,
@@ -213,30 +134,6 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-  },
-  markerImage: {
-    width: 40,
-    height: 40,
-  },
-  bottomMenu: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 70,
-    borderTopWidth: 1,
-    borderColor: '#E0E0E0',
-    backgroundColor: '#FFFFFF',
-  },
-  menuItem: {
-    alignItems: 'center',
-  },
-  menuText: {
-    fontSize: 12,
-    color: '#808080',
-  },
-  activeText: {
-    color: '#007AFF',
-    fontWeight: 'bold',
   },
 });
 

@@ -7,6 +7,7 @@ import { commonStyles } from '../../styles/commonStyles';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import BackButton from '../../components/BackButton';
+import {Button, Layout} from '@ui-kitten/components';
 
 
 const ChargerDetailsScreen = ({ route }) => {
@@ -28,8 +29,8 @@ const ChargerDetailsScreen = ({ route }) => {
     };
 
     return (
-      <ScrollView contentContainerStyle={commonStyles.container}>
-          <BackButton/>
+      <Layout contentContainerStyle={styles.container}>
+          {/*<BackButton/>*/}
           <View style={styles.imageContainer}>
               <Image source={chargerImage} style={styles.image} />
               <Text style={styles.location}>{chargerInfo.name}</Text>
@@ -45,18 +46,26 @@ const ChargerDetailsScreen = ({ route }) => {
               <Text style={styles.tariffTitle}>TARIFA: R$ 2,50</Text>
               <Text style={styles.link}>Acesse <Text style={styles.bold}>solfort.com/br</Text>, conheça nossa linha completa de produtos e faça um test-drive!</Text>
           </View>
-          <TouchableOpacity style={styles.buttonWrapper} onPress={handleStartCharging}>
-              <Text style={styles.buttonText}>Iniciar a Recarga</Text>
-          </TouchableOpacity>
-      </ScrollView>
+
+          <Button
+            style={styles.buttonWrapper}
+            onPress={handleStartCharging}
+          >
+              Iniciar a Recarga
+          </Button>
+
+          {/*<TouchableOpacity style={styles.buttonWrapper} onPress={handleStartCharging}>*/}
+          {/*    <Text style={styles.buttonText}>Iniciar a Recarga</Text>*/}
+          {/*</TouchableOpacity>*/}
+      </Layout>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        padding: 16,
-        backgroundColor: '#fff',
+        flex: 1,
+        // padding: 16,
+        backgroundColor: 'white',
     },
     imageContainer: {
         alignItems: 'center',
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: 200,
-        borderRadius: 10,
+        // borderRadius: 10,
     },
     location: {
         marginTop: 8,
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     tariffContainer: {
-        paddingVertical: 16,
+        padding: 20,
     },
     tariffTitle: {
         fontSize: 16,
@@ -127,9 +136,9 @@ const styles = StyleSheet.create({
     // },
 
     buttonWrapper: {
-        backgroundColor: colors.primary,
-        borderRadius: 7,
-        marginTop: 20,
+        // backgroundColor: colors.primary,
+        // borderRadius: 7,
+        margin: 20,
     },
 
     buttonText: {

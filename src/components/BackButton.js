@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     backButtonWrapper: {
         height: 40,
         width: 40,
-        backgroundColor: colors.gray,
-        borderRadius: 20,
+        // backgroundColor: colors.gray,
+        // borderRadius: 20,
         justifyContent: "center",
         alignItems: "center",
     },

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
+import { View, TouchableOpacity, FlatList, StyleSheet } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { colors } from "../../utils/colors";
 import { fonts } from "../../utils/fonts";
+import { Input, Button, Icon, Text, CheckBox, TopNavigation, TopNavigationAction, Layout } from '@ui-kitten/components';
+
 
 const CardListScreen = () => {
     const navigation = useNavigation();
@@ -31,11 +33,22 @@ const CardListScreen = () => {
         </View>
     );
 
+    const BackIcon = (props) => (
+      <Icon onPress={() => navigation.goBack()} {...props} name="arrow-back" />
+    );
+    const BackAction = () => <TopNavigationAction icon={BackIcon} />;
+
+
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>
-                <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
-            </TouchableOpacity>
+        <Layout style={styles.container}>
+            {/*<TouchableOpacity style={styles.backButtonWrapper} onPress={() => navigation.goBack()}>*/}
+            {/*    <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />*/}
+            {/*</TouchableOpacity>*/}
+
+            <TopNavigation accessoryLeft={BackAction} title="Adicionar Cartão" />
+
+
+
             <View style={styles.textContainer}>
                 <Text style={styles.headingText}>Meus Cartões</Text>
             </View>
@@ -51,7 +64,7 @@ const CardListScreen = () => {
             >
                 <Text style={styles.addButtonText}>Adicionar Novo Cartão</Text>
             </TouchableOpacity>
-        </View>
+        </Layout>
     );
 };
 
@@ -60,8 +73,7 @@ export default CardListScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: colors.white,
-        padding: 20,
+        backgroundColor: 'f5f5f5',
     },
     backButtonWrapper: {
         height: 40,

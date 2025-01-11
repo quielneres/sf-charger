@@ -1,16 +1,36 @@
-import { Alert, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { commonStyles } from '../../styles/commonStyles';
-import React, { useContext, useEffect, useState } from 'react';
+import {Alert, TouchableOpacity, View, StyleSheet} from 'react-native';
+import {commonStyles} from '../../styles/commonStyles';
+import React, {useContext, useEffect, useState} from 'react';
 import PaymentService from '../../services/PaymentService';
 import CreditCardService from '../../services/CreditCardService';
-import { AuthContext } from '../../context/AuthContext';
-import { useNavigation } from '@react-navigation/native';
+import {AuthContext} from '../../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
+import {
+  Input,
+  Button,
+  Icon,
+  Text,
+  Modal,
+  Card,
+  Spinner,
+  CheckBox,
+  TopNavigation,
+  TopNavigationAction,
+  Layout,
+  List,
+  ListItem,
+  Divider,
+} from '@ui-kitten/components';
 
-const DetailPaymentScreen = ({ route }) => {
-  const { detailsPayment } = route.params;
+const DetailPaymentScreen = ({route}) => {
+  const {detailsPayment} = route.params;
   const [paymentType, setPaymentType] = useState('');
-  const { user } = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const navigation = useNavigation();
+
+  const [startPayment, setStartPayment] = useState(false);
+
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     setPaymentType(detailsPayment.paymentType);
@@ -18,88 +38,220 @@ const DetailPaymentScreen = ({ route }) => {
   }, [detailsPayment]);
 
   const sendPayment = async () => {
-    const request = { ...detailsPayment, user };
+    const request = {...detailsPayment, user};
 
-    if (paymentType === 'creditCard') {
+    setStartPayment(true);
 
-      const result = await CreditCardService.saveCard(request);
-      if (result.success) {
-        console.log('Credit card payment processed successfully');
-        console.log('Transaction ID:', result.transactionId);
-        console.log('Status:', result.status);
-        console.log('Amount:', result.amount);
-        console.log('Card:', result.card);
-        Alert.alert('Pagamento Confirmado!');
-        navigation.navigate('HOME');
-      } else {
-        console.error('Credit card payment failed:', result.error);
-      }
-    }
+    setTimeout(() => {
+      setVisible(false);
+      setStartPayment(false);
+      navigation.navigate('DetailSuccessful');
+    }, 2000);
 
-    if (paymentType === 'pix') {
-      const result = await PaymentService.processPixPayment(detailsPayment);
-      if (result.success) {
-        console.log('PIX payment processed successfully');
-        navigation.navigate('HOME');
-      } else {
-        console.error('PIX payment failed:', result.error);
-      }
-    }
+    // if (paymentType === 'creditCard') {
+    //   const result = await CreditCardService.saveCard(request);
+    //   if (result.success) {
+    //     console.log('Credit card payment processed successfully');
+    //     console.log('Transaction ID:', result.transactionId);
+    //     console.log('Status:', result.status);
+    //     console.log('Amount:', result.amount);
+    //     console.log('Card:', result.card);
+    //     Alert.alert('Pagamento Confirmado!');
+    //     navigation.navigate('HOME');
+    //   } else {
+    //     console.error('Credit card payment failed:', result.error);
+    //   }
+    // }
+    //
+    // if (paymentType === 'pix') {
+    //   const result = await PaymentService.processPixPayment(detailsPayment);
+    //   if (result.success) {
+    //     console.log('PIX payment processed successfully');
+    //     navigation.navigate('HOME');
+    //   } else {
+    //     console.error('PIX payment failed:', result.error);
+    //   }
+    // }
   };
 
-  return (
-    <View style={commonStyles.container}>
-      <Text style={commonStyles.title}>Detalhes do pagamento:</Text>
-      {paymentType === 'creditCard' && (
-        <View style={styles.cardContainer}>
-          <Text style={styles.cardNumber}>**** **** **** {detailsPayment?.card.cardNumber.slice(-4)}</Text>
-          <Text style={styles.cardHolderName}>{detailsPayment?.card.holderName}</Text>
-          <Text style={styles.expirationDate}>Expira em: {detailsPayment?.card.expirationDate}</Text>
+  const details = [
+    {title: 'Duração', value: '1hr 30min'},
+    {title: 'Energia Usada', value: '45kWh'},
+    {title: 'Taxa/kWh', value: 'R$ 0,50'},
+    {title: 'Valor', value: 'R$ 22,50'},
+  ];
+
+  const costsBrakdown = [
+    {title: 'Energia', value: 'R$ 22,50'},
+    {title: 'Taxa de Serviço', value: 'R$ 2,25'},
+    {title: 'Total', value: 'R$ 24,75'},
+  ];
+
+  const BackIcon = props => (
+    <Icon onPress={() => navigation.goBack()} {...props} name="arrow-back" />
+  );
+  const BackAction = () => <TopNavigationAction icon={BackIcon} />;
+
+  const LoadingIndicator = props => (
+    <View style={[props.style, styles.indicator]}>
+      <Spinner size="small" />
+    </View>
+  );
+
+  const renderItem = ({item, index}) => (
+    <ListItem
+      style={styles.listItem}
+      title={() => (
+        <View style={styles.itemContainer}>
+          <Text style={styles.itemTitle}>{item.title}</Text>
+          <Text style={styles.itemValue}>{item.value}</Text>
         </View>
       )}
+    />
+  );
 
-      {paymentType === 'pix' && <Text style={commonStyles.text}>PIX</Text>}
+  return (
+    <Layout style={styles.container}>
+      <TopNavigation accessoryLeft={BackAction} title="Detalhes do pagamento" />
 
-      <Text style={commonStyles.text}>Valor</Text>
-      <Text style={styles.amount}>R$ {detailsPayment?.value}</Text>
+      <Divider />
 
-      <TouchableOpacity
-        style={commonStyles.buttonWrapper}
-        onPress={() => sendPayment()}
-      >
-        <Text style={commonStyles.buttonText}>Finalizar</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.content}>
+        <Text style={styles.sectionTitle}>Detalhes</Text>
+        <List
+          data={details}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+
+        <Divider />
+
+        <Text style={styles.sectionTitle}>Custos</Text>
+        <List
+          data={costsBrakdown}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          size="large"
+          status="primary"
+          style={styles.button}
+          onPress={() => setVisible(true)}>
+          Finalizar
+        </Button>
+      </View>
+
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}>
+        <Card disabled={true} style={styles.cardModal}>
+
+          <Text category="h6">Billing Details</Text>
+
+          <Text style={styles.paymentMethod}>Payment Method</Text>
+
+          <View style={styles.paymentIconsContainer}>
+            <Icon style={styles.icon} name="credit-card-outline" />
+            <Icon style={styles.icon} name="credit-card-outline" />
+            <Icon style={styles.icon} name="credit-card-outline" />
+          </View>
+
+
+          <View style={styles.detailsContainer}>
+            <Text category="s1">Energy Cost</Text>
+            <Text category="s1">$5.6</Text>
+          </View>
+          <View style={styles.detailsContainer}>
+            <Text category="s1">Sub Total</Text>
+            <Text category="s1">$5.6</Text>
+          </View>
+
+
+          {!startPayment ? (
+            <>
+              <Button style={styles.button} onPress={sendPayment}>
+                Confirmar Pagamento
+              </Button>
+
+              <Button
+                style={styles.button}
+                appearance="ghost"
+                onPress={() => setVisible(false)}>
+                Cancelar
+              </Button>
+            </>
+          ) : (
+            <Button
+              style={styles.button}
+              appearance="outline"
+              accessoryLeft={LoadingIndicator}>
+              Carregando
+            </Button>
+          )}
+        </Card>
+      </Modal>
+    </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  cardContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    marginBottom: 20,
-    elevation: 5,
-    alignItems: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  cardNumber: {
+  content: {
+    padding: 16,
+    margin: 16,
+    borderRadius: 10,
+    backgroundColor: 'white',
+  },
+  listItem: {
+    backgroundColor: 'white',
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  itemTitle: {
+    fontSize: 16,
+    color: '#333',
+  },
+
+  paymentIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 10,
+  },
+
+  icon: {
+    width: 32,
+    height: 32,
+  },
+  itemValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#007AFF',
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginVertical: 8,
   },
-  cardHolderName: {
-    fontSize: 16,
-    marginBottom: 10,
+  buttonContainer: {
+    padding: 16,
   },
-  expirationDate: {
-    fontSize: 14,
-    color: '#666',
+  button: {
+    margin: 16,
   },
-  amount: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  cardModal: {
+    width: 350,
   },
 });
 
