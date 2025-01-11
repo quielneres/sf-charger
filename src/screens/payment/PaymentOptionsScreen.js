@@ -74,16 +74,22 @@ const PaymentOptionsScreen = ({route}) => {
       onPress: handleAddCard,
     },
     {
+      title: 'PIX',
+      description: 'Pagamento com PIX',
+      icon: WalletsIcon,
+      onPress: () => navigation.navigate('PaymentPix', {chargerInfo}),
+    },
+    {
       title: 'Carteiras',
       description: 'Paytm, PhonePe, Amazon Pay e mais',
       icon: WalletsIcon,
-      onPress: () => navigation.navigate('PaymentPix', {chargerInfo}), // Ajuste a navegação conforme necessário
+      onPress: () => {},
     },
     {
       title: 'Internet Banking',
       description: 'Selecione de uma lista de bancos',
       icon: NetBankingIcon,
-      onPress: () => {}, // Adicione a ação de navegação aqui
+      onPress: () => {},
     },
   ];
 
@@ -143,7 +149,7 @@ const Divider = () => <View style={styles.divider} />;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9f9'
+    backgroundColor: '#f9f9f9',
   },
   sectionTitle: {
     marginHorizontal: 16,

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import { Text, Button, Layout } from '@ui-kitten/components'; // UI Kitten components
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
@@ -26,11 +26,11 @@ const WelcomeScreen = () => {
     return (
       <Layout style={styles.container}>
           <Image source={require("../assets/logo.png")} style={styles.logo} />
-          <Image source={require("../assets/man.png")} style={styles.bannerImage} />
-          <Text style={styles.title}>Lorem ipsum dolor.</Text>
+          <Image source={require("../assets/3173433.jpg")} style={styles.bannerImage} />
+          <Text style={styles.title}>Seu recurso para carregamento</Text>
           <Button
             style={styles.button}
-            appearance="outline"
+            appearance="ghost"
             status="basic"
             onPress={() => navigation.navigate("HOME")}
           >
@@ -38,17 +38,21 @@ const WelcomeScreen = () => {
           </Button>
 
           <View style={styles.buttonContainer}>
-              <Button
-                onPress={handleLogin}
-              >
-                  Entrar
-              </Button>
+
               <Button
                 style={styles.button}
                 onPress={handleSignup}
               >
-                  Cadastrar-se
+                  Crie uma conta
               </Button>
+
+
+              <TouchableOpacity onPress={handleLogin}>
+                  <Text style={{ textAlign: 'center', color: colors.primary, marginTop: 10 }}>
+                      Já tem uma conta? Entrar
+                  </Text>
+              </TouchableOpacity>
+
           </View>
       </Layout>
     );
@@ -74,14 +78,14 @@ const styles = StyleSheet.create({
         width: 231,
     },
     title: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: 'bold',
         color: colors.primary,
         marginBottom: 20,
     },
     buttonContainer: {
         width: '80%',
-        marginTop: 30,
+        marginTop: 10,
     },
     button: {
         marginVertical: 10,

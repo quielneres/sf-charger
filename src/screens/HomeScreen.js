@@ -8,6 +8,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import BackButton from '../components/BackButton';
 import { AuthContext } from '../context/AuthContext';
 import BottomMenu from './layout/BottomMenu';
+import MapView from 'react-native-maps';
+import MapScreen from './MapScreen';
 
 const HomeScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
@@ -30,7 +32,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <BackButton />
-        <Text style={styles.logo}>Sol Fort</Text>
+        {/*<Text style={styles.logo}>Sol Fort</Text>*/}
         <View style={styles.icons}>
           <TouchableOpacity>
             <Icon name="mail-outline" size={24} color="#000" />
@@ -49,12 +51,14 @@ const HomeScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.mapContainer}>
-        <Button
-          title="Ir para o Carregador"
-          onPress={() => navigation.navigate('PaymentOptions', { chargerInfo })}
-        />
-      </View>
+      <MapScreen />
+
+      {/*<View style={styles.mapContainer}>*/}
+      {/*  <Button*/}
+      {/*    title="Ir para o Carregador"*/}
+      {/*    onPress={() => navigation.navigate('PaymentOptions', { chargerInfo })}*/}
+      {/*  />*/}
+      {/*</View>*/}
 
       <View style={styles.footer}>
         <View style={styles.legend}>
