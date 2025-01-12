@@ -9,11 +9,11 @@ const WelcomeScreen = () => {
     const navigation = useNavigation();
     const { isLoggedIn } = useContext(AuthContext);
 
-    // useEffect(() => {
-    //     if (isLoggedIn) {
-    //         navigation.navigate("HOME");
-    //     }
-    // }, [isLoggedIn, navigation]);
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigation.navigate("HOME");
+        }
+    }, [isLoggedIn, navigation]);
 
     const handleLogin = () => {
         navigation.navigate("LOGIN");

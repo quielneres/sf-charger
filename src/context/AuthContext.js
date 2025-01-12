@@ -20,7 +20,11 @@ export const AuthProvider = ({ children }) => {
     checkLoginStatus();
   }, []);
 
-  const login = async (userData) => {
+  const loginContext = async (userData) => {
+    if (!userData) {
+      console.error('User data is undefined');
+      return;
+    }
     await AsyncStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
     setIsLoggedIn(true);
@@ -33,7 +37,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, loginContext, logout }}>
       {children}
     </AuthContext.Provider>
   );

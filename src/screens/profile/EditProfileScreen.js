@@ -1,32 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Vie,
+  View,
   TextInput,
   TouchableOpacity,
   Alert,
   StyleSheet,
-  View,
   Image,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {colors} from '../../utils/colors';
-import {fonts} from '../../utils/fonts';
-import {
-  Layout,
-  Text,
-  List,
-  ListItem,
-  Divider,
-  Icon,
-  Button,
-  Card,
-  TopNavigation,
-  Input,
-  TopNavigationAction,
-} from '@ui-kitten/components';
+import {Layout, Text, Input, Button, Divider, Icon, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 
 const EditProfileScreen = () => {
   const navigation = useNavigation();
@@ -49,7 +32,6 @@ const EditProfileScreen = () => {
         setUserId(userDoc.id);
         setName(userData.name);
         setPassword(userData.password);
-        navigation.goBack();
       } else {
         Alert.alert('Erro', 'Usuário não encontrado');
         navigation.goBack();
@@ -57,10 +39,6 @@ const EditProfileScreen = () => {
     };
     fetchUserData();
   }, [email, navigation]);
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
 
   const updateProfile = async () => {
     try {
@@ -90,9 +68,9 @@ const EditProfileScreen = () => {
           style={styles.avatar}
           source={{uri: 'https://via.placeholder.com/100'}}
         />
-        <Text category="h6">Junaid Ahmad</Text>
+        <Text category="h6">{name}</Text>
         <Text category="s1" appearance="hint">
-          United Kingdom
+          {email}
         </Text>
       </View>
 
@@ -103,70 +81,27 @@ const EditProfileScreen = () => {
           label="Nome"
           placeholder="Nome"
           style={[styles.input, {marginTop: 24}]}
+          value={name}
+          onChangeText={setName}
         />
 
-        <Input label="Sobrenome" style={[styles.input]} />
-
-        <Input label="E-mail" style={[styles.input]} />
-
-        <Input label="Número de Telefone" style={[styles.input]} />
-
-        <Input label="Endereço" style={[styles.input]} />
+        <Input
+          label="Senha"
+          placeholder="Senha"
+          style={[styles.input]}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
       </View>
 
       <View style={styles.footerContainer}>
-        <Button onPress={() => {}}>Salvar</Button>
+        <Button onPress={updateProfile}>Salvar</Button>
         <Button style={{marginTop: 10}} status="basic" onPress={() => {}}>
           Trocar Senha
         </Button>
       </View>
     </Layout>
-
-    // <View style={styles.container}>
-    //   <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
-    //     <Ionicons name={"arrow-back-outline"} color={colors.primary} size={25} />
-    //   </TouchableOpacity>
-    //   <View style={styles.textContainer}>
-    //     <Text style={styles.headingText}>Editar Perfil</Text>
-    //   </View>
-    //   <View style={styles.formContainer}>
-    //     <View style={styles.inputContainer}>
-    //       <Ionicons name={"person-outline"} size={30} color={colors.secondary} />
-    //       <TextInput
-    //         style={styles.textInput}
-    //         placeholder="Nome"
-    //         placeholderTextColor={colors.secondary}
-    //         value={name}
-    //         onChangeText={setName}
-    //       />
-    //     </View>
-    //     <View style={styles.inputContainer}>
-    //       <Ionicons name={"mail-outline"} size={30} color={colors.secondary} />
-    //       <TextInput
-    //         style={styles.textInput}
-    //         placeholder="E-mail"
-    //         placeholderTextColor={colors.secondary}
-    //         keyboardType="email-address"
-    //         value={email}
-    //         editable={false}
-    //       />
-    //     </View>
-    //     <View style={styles.inputContainer}>
-    //       <SimpleLineIcons name={"lock"} size={30} color={colors.secondary} />
-    //       <TextInput
-    //         style={styles.textInput}
-    //         placeholder="Senha"
-    //         placeholderTextColor={colors.secondary}
-    //         secureTextEntry={true}
-    //         value={password}
-    //         onChangeText={setPassword}
-    //       />
-    //     </View>
-    //     <TouchableOpacity style={styles.updateButtonWrapper} onPress={updateProfile}>
-    //       <Text style={styles.updateText}>Atualizar</Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // </View>
   );
 };
 
@@ -194,58 +129,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
   },
-  cardForm: {
-    backgroundColor: '#E4E9F2', // Accepted completion
-  },
-
   footerContainer: {
     padding: 20,
-  },
-
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: colors.gray,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textContainer: {
-    marginVertical: 20,
-  },
-  headingText: {
-    fontSize: 32,
-    color: colors.primary,
-    fontFamily: fonts.SemiBold,
-  },
-  formContainer: {
-    marginTop: 20,
-  },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: colors.secondary,
-    borderRadius: 7,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 2,
-    marginVertical: 10,
-  },
-  textInput: {
-    flex: 1,
-    paddingHorizontal: 10,
-    fontFamily: fonts.Light,
-  },
-  updateButtonWrapper: {
-    backgroundColor: colors.primary,
-    borderRadius: 7,
-    marginTop: 20,
-  },
-  updateText: {
-    color: colors.white,
-    fontSize: 20,
-    fontFamily: fonts.SemiBold,
-    textAlign: 'center',
-    padding: 10,
   },
 });

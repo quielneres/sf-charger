@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -15,12 +15,14 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {Layout, TopNavigation, Input, Button, Icon, TopNavigationAction} from '@ui-kitten/components';
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
+  const { isLoggedIn, user, loginContext } = useContext(AuthContext);
 
   const handleSignup = () => {
     navigation.navigate('SIGNUP');
@@ -36,7 +38,7 @@ const LoginScreen = () => {
 
       if (!userSnapshot.empty) {
         const userData = userSnapshot.docs[0].data();
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
+        await loginContext(userData); // Pass userData to loginContext
         navigation.navigate('HOME');
       } else {
         Alert.alert('Erro', 'Email ou senha incorretos');
@@ -57,7 +59,7 @@ const LoginScreen = () => {
     <Layout style={styles.container}>
 
       <TopNavigation
-        accessoryLeft={BackAction}
+        // accessoryLeft={BackAction}
         title="Bem-vindo de volta!"
         alignment="center"
         style={{ fontWeight: 'bold' }}
@@ -93,6 +95,15 @@ const LoginScreen = () => {
           style={{marginTop: 20}}
           onPress={login}>
           Entrar
+        </Button>
+
+        <Button
+          style={[styles.button, {marginTop: 20}]}
+          appearance="ghost"
+          status="basic"
+          onPress={() => navigation.navigate("HOME")}
+        >
+          Continuar sem login
         </Button>
       </View>
 

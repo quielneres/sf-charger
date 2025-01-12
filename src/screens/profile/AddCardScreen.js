@@ -21,6 +21,8 @@ const AddCardScreen = ({ route }) => {
       return;
     }
 
+    console.log('aquiiiii');
+
     const newCard = { cardNumber, holderName, expirationDate, cvv };
 
     try {
@@ -32,8 +34,8 @@ const AddCardScreen = ({ route }) => {
 
       Alert.alert('Sucesso', 'Cartão salvo com sucesso!');
 
-      if (chargerInfo) {
         navigation.navigate('PaymentOptions', { chargerInfo });
+      if (chargerInfo) {
       } else {
         navigation.goBack();
       }
@@ -112,7 +114,7 @@ const AddCardScreen = ({ route }) => {
           </CheckBox>
         </View>
       </View>
-      <Button size="large" status="primary" style={styles.button} onPress={saveCard}>
+      <Button size="large" status="primary" style={styles.button} onPress={() => saveCard()}>
         Adicionar Cartão
       </Button>
     </Layout>
