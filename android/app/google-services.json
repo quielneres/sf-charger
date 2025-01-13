@@ -1,124 +1,26 @@
 {
   "project_info": {
-    "project_number": "317725716934",
-    "firebase_url": "https://toop-life.firebaseio.com",
-    "project_id": "toop-life",
-    "storage_bucket": "toop-life.firebasestorage.app"
+    "project_number": "1016603900677",
+    "project_id": "e2n-tech",
+    "storage_bucket": "e2n-tech.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:317725716934:android:40d355e7f1bfb6c45542c7",
-        "android_client_info": {
-          "package_name": "com.reactnativewithnativewind"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBGQ9DMw0Tt6o-C_SXcg9rumoswvzuMKng"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:317725716934:android:08151cd257d632545542c7",
+        "mobilesdk_app_id": "1:1016603900677:android:feb74df529722fb82c956c",
         "android_client_info": {
           "package_name": "com.sfcharger"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBGQ9DMw0Tt6o-C_SXcg9rumoswvzuMKng"
+          "current_key": "AIzaSyDRq4fdKawRlkCmwQ1z8ZA0kSeBH71Oo9w"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:317725716934:android:09ba1a6617e428445542c7",
-        "android_client_info": {
-          "package_name": "com.testfirebaseproject"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBGQ9DMw0Tt6o-C_SXcg9rumoswvzuMKng"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:317725716934:android:f3fd81a233f3c30f",
-        "android_client_info": {
-          "package_name": "com.tooplife"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBGQ9DMw0Tt6o-C_SXcg9rumoswvzuMKng"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "317725716934-dgshborjgok40uisajpbd2eqmcptdbk1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
