@@ -31,14 +31,18 @@ const LoginScreen = () => {
   const login = async () => {
     try {
       const usersCollection = firestore().collection('users');
+
+      // console.log('usersCollection1', email);
+
       const userSnapshot = await usersCollection
-        .where('email', '==', email)
-        .where('password', '==', password)
         .get();
+
+      console.log('userSnapshot', userSnapshot);
 
       if (!userSnapshot.empty) {
         const userData = userSnapshot.docs[0].data();
-        await loginContext(userData); // Pass userData to loginContext
+        console.log('userData', userData);
+        // await loginContext(userData); // Pass userData to loginContext
         navigation.navigate('HOME');
       } else {
         Alert.alert('Erro', 'Email ou senha incorretos');

@@ -8,3 +8,13 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+# React Native
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.hermes.** { *; }
+
+# Evitar problemas com Firebase ou bibliotecas nativas
+-dontwarn com.google.**
+-dontwarn org.apache.**
+-dontwarn javax.annotation.**
+
