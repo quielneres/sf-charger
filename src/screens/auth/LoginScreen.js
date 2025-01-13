@@ -14,7 +14,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
-import {Layout, TopNavigation, Input, Button, Icon, TopNavigationAction} from '@ui-kitten/components';
+import {
+  Layout,
+  TopNavigation,
+  Input,
+  Button,
+  Icon,
+  TopNavigationAction,
+  Modal,
+  Card,
+  Spinner,
+} from '@ui-kitten/components';
 import { AuthContext } from '../../context/AuthContext';
 
 const LoginScreen = () => {
@@ -23,12 +33,14 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
   const { isLoggedIn, user, loginContext } = useContext(AuthContext);
+  const [visible, setVisible] = React.useState(false);
 
   const handleSignup = () => {
     navigation.navigate('SIGNUP');
   };
 
   const login = async () => {
+    setVisible(true);
     try {
       const usersCollection = firestore().collection('users');
       const userSnapshot = await usersCollection
@@ -39,12 +51,17 @@ const LoginScreen = () => {
       if (!userSnapshot.empty) {
         const userData = userSnapshot.docs[0].data();
         await loginContext(userData); // Pass userData to loginContext
+        setVisible(false);
+
         navigation.navigate('HOME');
       } else {
+        setVisible(false);
+
         Alert.alert('Erro', 'Email ou senha incorretos');
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
+      setVisible(false);
       Alert.alert('Erro', 'Não foi possível fazer login');
     }
   };
@@ -113,6 +130,17 @@ const LoginScreen = () => {
           <Text style={styles.signupText}>Cadastre-se</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Spinner />
+
+        </Card>
+      </Modal>
     </Layout>
   );
 };
@@ -124,6 +152,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     justifyContent: 'space-between',
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   content: {
     flex: 1,

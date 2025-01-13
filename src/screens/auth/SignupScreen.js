@@ -2,15 +2,12 @@ import React, {useState} from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Alert,
   StyleSheet,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {
@@ -18,15 +15,19 @@ import {
   Layout,
   TopNavigation,
   TopNavigationAction,
-  Input, Button,
+  Input, Button, Modal, Card,
+  Spinner,
 } from '@ui-kitten/components';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
+  const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
+  const [visible, setVisible] = React.useState(false);
+
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -37,6 +38,9 @@ const SignupScreen = () => {
   };
 
   const signup = async () => {
+
+    setVisible(true);
+
     try {
       const usersCollection = firestore().collection('users');
       const userSnapshot = await usersCollection
@@ -44,14 +48,17 @@ const SignupScreen = () => {
         .get();
 
       if (!userSnapshot.empty) {
+        setVisible(false);
         Alert.alert('Erro', 'Usuário já cadastrado');
       } else {
         await usersCollection.add({name, email, password});
+        setVisible(false);
         Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
         navigation.navigate('LOGIN');
       }
     } catch (error) {
       console.error('Erro ao cadastrar usuário:', error);
+      setVisible(false);
       Alert.alert('Erro', 'Não foi possível cadastrar o usuário');
     }
   };
@@ -79,13 +86,36 @@ const SignupScreen = () => {
           onChangeText={setName}
         />
 
-        <Input label="Sobrenome" style={[styles.input]} />
-
-        <Input label="E-mail" style={[styles.input]} />
-
-        <Input label="Senha" style={[styles.input]} />
-
-        <Input label="Confirme a senha" style={[styles.input]} />
+        <Input
+          label="Sobrenome"
+          placeholder="Entre com seu Sobrenome"
+          style={styles.input}
+          placeholderTextColor={colors.secondary}
+          value={lastname}
+          onChangeText={setLastname}
+        />
+        <Input
+          label="E-mail"
+          placeholder="Entre com seu e-mail"
+          value={email}
+          keyboardType={'email-address'}
+          style={[styles.input]}
+          onChangeText={setEmail}
+        />
+        <Input
+          label="Senha"
+          placeholder="Entre com a senha"
+          style={[styles.input]}
+          secureTextEntry={secureEntry}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Input
+          label="Confirme a senha"
+          secureTextEntry={secureEntry}
+          placeholder="Entre com a confirmação"
+          style={[styles.input]}
+        />
 
         <Button
           style={styles.button}
@@ -133,6 +163,18 @@ const SignupScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        visible={visible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setVisible(false)}
+      >
+        <Card disabled={true}>
+          <Spinner />
+
+        </Card>
+      </Modal>
+
     </Layout>
   );
 };
@@ -142,6 +184,9 @@ export default SignupScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   formTitle: {
     fontSize: 25,
