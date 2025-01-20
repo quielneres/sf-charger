@@ -11,6 +11,45 @@ const MapScreen = () => {
       latitude: -15.6008448,
       longitude: -47.6839936,
       description: 'Eletroposto Sol Fort Plug Charger',
+      opened: '9:00 - 23:00',
+      phone: '61 9 91234567',
+      address: 'Rua 204 Numero 30 Vila Brasilia',
+      amenities: [
+        // {
+        //   name: 'Café',
+        //   icon: 'coffee-outline',
+        // },
+        {
+          name: 'Wifi',
+          icon: 'wifi-outline',
+        },
+        // {
+        //   name: 'Comida',
+        //   icon: 'restaurant-outline',
+        // },
+        // {
+        //   name: 'Conveniencia',
+        //   icon: 'shopping-bag-outline',
+        // },
+        // {
+        //   name: 'Bar',
+        //   icon: 'beer-outline',
+        // },
+      ],
+      connectors: [
+        {
+          id: 1,
+          name: '3 pin',
+        },
+        {
+          id: 2,
+          name: 'CCS2',
+        },
+        {
+          id: 3,
+          name: 'Type 2',
+        }
+      ],
     },
   ]);
   const navigation = useNavigation();

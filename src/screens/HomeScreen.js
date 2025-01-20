@@ -1,20 +1,44 @@
-// src/screens/HomeScreen.js
-import React, { useContext, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Button } from 'react-native';
-import { colors } from '../utils/colors';
-import { fonts } from '../utils/fonts';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import BackButton from '../components/BackButton';
-import { AuthContext } from '../context/AuthContext';
+import React, {useContext, useState, useEffect} from 'react';
+import {StyleSheet, Text, View, Button} from 'react-native';
+
+import {useNavigation} from '@react-navigation/native';
+import {AuthContext} from '../context/AuthContext';
+import {Layout} from '@ui-kitten/components';
+
+import MapView, {Marker} from 'react-native-maps';
 import BottomMenu from './layout/BottomMenu';
-import MapView from 'react-native-maps';
-import MapScreen from './MapScreen';
 
 const HomeScreen = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const {isLoggedIn} = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('map');
   const navigation = useNavigation();
+
+  const [regiaoInicial, setRegiaoInicial] = useState(null);
+  const [markerCoordinate, setMarkerCoordinate] = useState(null);
+  useEffect(() => {
+    // Simula uma busca assíncrona dos dados do mapa
+    const carregaDadosDoMapa = async () => {
+      // Aqui você faria uma chamada a uma API ou outra fonte de dados
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simula um atraso
+      setRegiaoInicial({
+        latitude: -23.5639,
+        longitude: -46.6562,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      setMarkerCoordinate({latitude: -23.5639, longitude: -46.6562});
+    };
+
+    carregaDadosDoMapa();
+  }, []);
+
+  if (!regiaoInicial || !markerCoordinate) {
+    return (
+      <View style={styles.loading}>
+        <Text>Carregando mapa...</Text>
+      </View>
+    ); // Ou um componente de carregamento mais elaborado
+  }
 
   const chargerInfo = {
     id: 2,
@@ -28,61 +52,38 @@ const HomeScreen = () => {
     isLoggedIn ? navigation.navigate('PROFILE') : navigation.navigate('LOGIN');
   };
 
+  // const regiaoInicial = {
+  //   latitude: -23.5639, // Latitude de São Paulo
+  //   longitude: -46.6562, // Longitude de São Paulo
+  //   latitudeDelta: 0.0922,
+  //   longitudeDelta: 0.0421,
+  // };
+
   return (
+    // <Layout>
     <View style={styles.container}>
-      <View style={styles.header}>
-        <BackButton />
-        {/*<Text style={styles.logo}>Sol Fort</Text>*/}
-        <View style={styles.icons}>
-          <TouchableOpacity>
-            <Icon name="mail-outline" size={24} color="#000" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="refresh" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.searchBar}>
-        <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput placeholder="Pesquisar" style={styles.input} />
-        <TouchableOpacity>
-          <Icon name="filter-outline" size={20} color="#888" />
-        </TouchableOpacity>
-      </View>
-
-      <MapScreen />
-
-      {/*<View style={styles.mapContainer}>*/}
-      {/*  <Button*/}
-      {/*    title="Ir para o Carregador"*/}
-      {/*    onPress={() => navigation.navigate('PaymentOptions', { chargerInfo })}*/}
-      {/*  />*/}
-      {/*</View>*/}
-
-      <View style={styles.footer}>
-        <View style={styles.legend}>
-          <View style={[styles.dot, { backgroundColor: 'green' }]} />
-          <Text>Disponível</Text>
-          <View style={[styles.dot, { backgroundColor: 'blue' }]} />
-          <Text>Rápido</Text>
-          <View style={[styles.dot, { backgroundColor: 'red' }]} />
-          <Text>Em uso</Text>
-          <View style={[styles.dot, { backgroundColor: 'black' }]} />
-          <Text>Em Manutenção</Text>
-          <View style={[styles.dot, { backgroundColor: 'gray' }]} />
-          <Text>Não contactados</Text>
-        </View>
-      </View>
+      <Button
+        title="Ir para o Carregador"
+        onPress={() => navigation.navigate('PaymentOptions', {chargerInfo})}
+      />
+      <MapView style={styles.map} initialRegion={regiaoInicial}>
+        <Marker coordinate={markerCoordinate} />
+      </MapView>
 
       <BottomMenu activeTab={activeTab} setActiveTab={setActiveTab} handleLogin={handleLogin} />
+
     </View>
+    // </Layout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
   },
   header: {
     flexDirection: 'row',

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -25,14 +26,14 @@ import {
   Card,
   Spinner,
 } from '@ui-kitten/components';
-import { AuthContext } from '../../context/AuthContext';
+import {AuthContext} from '../../context/AuthContext';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
-  const { isLoggedIn, user, loginContext } = useContext(AuthContext);
+  const {isLoggedIn, user, loginContext} = useContext(AuthContext);
   const [visible, setVisible] = React.useState(false);
 
   const handleSignup = () => {
@@ -66,21 +67,26 @@ const LoginScreen = () => {
     }
   };
 
-  const BackIcon = (props) => (
+  const BackIcon = props => (
     <Icon onPress={() => navigation.goBack()} {...props} name="arrow-back" />
   );
   const BackAction = () => <TopNavigationAction icon={BackIcon} />;
 
-
   return (
     <Layout style={styles.container}>
-
       <TopNavigation
         // accessoryLeft={BackAction}
         title="Bem-vindo de volta!"
         alignment="center"
-        style={{ fontWeight: 'bold' }}
+        style={{fontWeight: 'bold'}}
       />
+
+      <Layout style={styles.containerLogo}>
+        <Image
+          source={require('../../assets/logo-sol-fort.png')}
+          style={styles.logo}
+        />
+      </Layout>
 
       <View style={styles.formContainer}>
         <Input
@@ -88,7 +94,7 @@ const LoginScreen = () => {
           placeholder="Entre  com seu e-mail"
           placeholderTextColor={colors.secondary}
           keyboardType="email-address"
-          style={{marginBottom: 30}}
+          style={{marginBottom: 30, backgroundColor: 'white'}}
           value={email}
           onChangeText={setEmail}
         />
@@ -97,7 +103,7 @@ const LoginScreen = () => {
           placeholder="Entre com sua senha"
           placeholderTextColor={colors.secondary}
           secureTextEntry={secureEntry}
-          style={{marginBottom: 5}}
+          style={{marginBottom: 5, backgroundColor: 'white'}}
           value={password}
           onChangeText={setPassword}
         />
@@ -118,8 +124,7 @@ const LoginScreen = () => {
           style={[styles.button, {marginTop: 20}]}
           appearance="ghost"
           status="basic"
-          onPress={() => navigation.navigate("HOME")}
-        >
+          onPress={() => navigation.navigate('HOME')}>
           Continuar sem login
         </Button>
       </View>
@@ -134,11 +139,9 @@ const LoginScreen = () => {
       <Modal
         visible={visible}
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setVisible(false)}
-      >
+        onBackdropPress={() => setVisible(false)}>
         <Card disabled={true}>
           <Spinner />
-
         </Card>
       </Modal>
     </Layout>
@@ -160,6 +163,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
+  containerLogo: {
+    alignItems: 'center'
+  },
+  logo: {
+    height: 50,
+    width: 150,
+    marginVertical: 0,
+  },
+
   backButtonWrapper: {
     height: 40,
     width: 40,
@@ -178,6 +190,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: 20,
+    paddingTop: 0
   },
   inputContainer: {
     borderWidth: 1,

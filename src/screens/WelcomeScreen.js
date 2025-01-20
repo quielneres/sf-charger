@@ -25,7 +25,7 @@ const WelcomeScreen = () => {
 
     return (
       <Layout style={styles.container}>
-          <Image source={require("../assets/logo.png")} style={styles.logo} />
+          <Image source={require("../assets/logo-sol-fort.png")} style={styles.logo} />
           <Image source={require("../assets/3173433.jpg")} style={styles.bannerImage} />
           <Text style={styles.title}>Seu recurso para carregamento</Text>
           <Button
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     logo: {
-        height: 40,
-        width: 140,
+        height: 50,
+        width: 240,
         marginVertical: 30,
     },
     bannerImage: {

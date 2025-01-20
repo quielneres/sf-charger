@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../../context/AuthContext';
@@ -140,6 +140,10 @@ const PaymentOptionsScreen = ({route}) => {
           )}
         />
       </View>
+      <Button
+        title="HOME"
+        onPress={() => navigation.navigate('HOME')}
+      />
     </Layout>
   );
 };
