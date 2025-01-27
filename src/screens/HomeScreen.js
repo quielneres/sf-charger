@@ -1,140 +1,216 @@
-// src/screens/HomeScreen.js
-import React, { useContext, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Button } from 'react-native';
-import { colors } from '../utils/colors';
-import { fonts } from '../utils/fonts';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import BackButton from '../components/BackButton';
-import { AuthContext } from '../context/AuthContext';
-import BottomMenu from './layout/BottomMenu';
-import MapView from 'react-native-maps';
-import MapScreen from './MapScreen';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import MapView, {Marker} from 'react-native-maps';
+import {StyleSheet, View, Text} from 'react-native';
+import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
+import {Button} from '@ui-kitten/components';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {id} from "@gorhom/bottom-sheet/lib/typescript/utilities/id";
 
-const HomeScreen = () => {
-  const { isLoggedIn } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('map');
-  const navigation = useNavigation();
 
-  const chargerInfo = {
-    id: 2,
-    name: 'Eletroposto Sol Fort',
-    latitude: -15.6008448,
-    longitude: -47.6839936,
-    description: 'Eletroposto Sol Fort Plug Charger',
-  };
+const chargers = [
+    {id: 'charger-01', latitude: -23.55052, longitude: -46.633308, title: 'Charger 01'},
+    {id: 'charger-02', latitude: -23.55942, longitude: -46.641308, title: 'Charger 02'},
+];
 
-  const handleLogin = () => {
-    isLoggedIn ? navigation.navigate('PROFILE') : navigation.navigate('LOGIN');
-  };
+const HomeScreen = ({navigation}) => {
+    const bottomSheetRef = useRef(null); // Referência para o Bottom Sheet
+    const [selectedCharger, setSelectedCharger] = useState(null)
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <BackButton />
-        {/*<Text style={styles.logo}>Sol Fort</Text>*/}
-        <View style={styles.icons}>
-          <TouchableOpacity>
-            <Icon name="mail-outline" size={24} color="#000" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Icon name="refresh" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-      </View>
 
-      <View style={styles.searchBar}>
-        <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput placeholder="Pesquisar" style={styles.input} />
-        <TouchableOpacity>
-          <Icon name="filter-outline" size={20} color="#888" />
-        </TouchableOpacity>
-      </View>
+    // hooks
+    const sheetRef = useRef(null);
 
-      <MapScreen />
+    // variables
+    const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
 
-      {/*<View style={styles.mapContainer}>*/}
-      {/*  <Button*/}
-      {/*    title="Ir para o Carregador"*/}
-      {/*    onPress={() => navigation.navigate('PaymentOptions', { chargerInfo })}*/}
-      {/*  />*/}
-      {/*</View>*/}
+    // callbacks
+    const handleSheetChange = useCallback((index) => {
+        console.log("handleSheetChange", index);
+    }, []);
+    const handleSnapPress = useCallback((index) => {
+        sheetRef.current?.snapToIndex(index);
+    }, []);
+    const handleClosePress = useCallback(() => {
+        sheetRef.current?.close();
+    }, []);
 
-      <View style={styles.footer}>
-        <View style={styles.legend}>
-          <View style={[styles.dot, { backgroundColor: 'green' }]} />
-          <Text>Disponível</Text>
-          <View style={[styles.dot, { backgroundColor: 'blue' }]} />
-          <Text>Rápido</Text>
-          <View style={[styles.dot, { backgroundColor: 'red' }]} />
-          <Text>Em uso</Text>
-          <View style={[styles.dot, { backgroundColor: 'black' }]} />
-          <Text>Em Manutenção</Text>
-          <View style={[styles.dot, { backgroundColor: 'gray' }]} />
-          <Text>Não contactados</Text>
-        </View>
-      </View>
+    const handleSheetChanges = useCallback((index) => {
+        console.log('handleSheetChanges', index);
+    }, []);
 
-      <BottomMenu activeTab={activeTab} setActiveTab={setActiveTab} handleLogin={handleLogin} />
-    </View>
-  );
+
+    const handleMarkerPress = (charger) => {
+        console.log('handle')
+        setSelectedCharger(charger); // Atualiza o estado com o carregador selecionado
+        sheetRef.current?.snapToIndex(1);
+
+        // bottomSheetRef.current?.snapToIndex(1); // Abre o Bottom Sheet
+    };
+
+    const closeBottomSheet = () => {
+        bottomSheetRef.current?.close(); // Fecha o Bottom Sheet
+    };
+
+    return (
+        <GestureHandlerRootView style={styles.container}>
+
+            <View style={styles.container}>
+                {/* Mapa */}
+                {/*<MapView*/}
+                {/*    style={styles.map}*/}
+                {/*    initialRegion={{*/}
+                {/*        latitude: -23.55052,*/}
+                {/*        longitude: -46.633308,*/}
+                {/*        latitudeDelta: 0.05,*/}
+                {/*        longitudeDelta: 0.05,*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    {chargers.map((charger) => (*/}
+                {/*        <Marker*/}
+                {/*            key={charger.id}*/}
+                {/*            coordinate={{ latitude: charger.latitude, longitude: charger.longitude }}*/}
+                {/*            title={charger.title}*/}
+                {/*            onPress={() => handleMarkerPress(charger)}*/}
+                {/*        />*/}
+                {/*    ))}*/}
+                {/*</MapView>*/}
+
+
+                <View style={styles.mapContainer}>
+                    {chargers.map((charger, index) => (
+                        <Button
+                            key={charger.id || index}
+                            title=""
+                            onPress={() => handleMarkerPress(charger)}
+                        >
+                            Ir para o Carregador
+                        </Button>
+                    ))}
+
+
+                    {/*<Button*/}
+                    {/*    title=""*/}
+                    {/*    onPress={navigation.navigate('PROFILE')}*/}
+                    {/*>*/}
+                    {/*   Perfil*/}
+                    {/*</Button>*/}
+                </View>
+
+
+                {/*<Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />*/}
+                {/*<Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />*/}
+                {/*<Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />*/}
+                {/*<Button title="Close" onPress={() => handleClosePress()} />*/}
+
+
+
+                <BottomSheet
+                    ref={sheetRef}
+                    index={-1}
+                    snapPoints={snapPoints}
+                    enableDynamicSizing={false}
+                    onChange={handleSheetChange}
+                >
+                    <BottomSheetView style={styles.contentContainer}>
+                        <View style={styles.bottomSheetContent}>
+                            {selectedCharger ? (
+                                <>
+                                    <Text style={styles.chargerTitle}>{selectedCharger.title}</Text>
+                                    <Text style={styles.chargerDetails}>Status: Disponível</Text>
+                                    <Text style={styles.chargerDetails}>Distância: 1.2 km</Text>
+
+                                    {/* Botões */}
+                                    <Button
+                                        style={styles.button}
+                                        appearance="outline"
+                                        onPress={() => alert('Abrir no Waze (a ser implementado)')}
+                                    >
+                                        Navegar no Waze
+                                    </Button>
+                                    <Button
+                                        style={styles.button}
+                                        onPress={() => {
+                                            closeBottomSheet(); // Fecha o Bottom Sheet
+                                            navigation.navigate('ChargerDetails', {chargerId: selectedCharger.id});
+                                        }}
+                                    >
+                                        Ver Detalhes
+                                    </Button>
+                                </>
+                            ) : (
+                                <Text>Nenhum carregador selecionado.</Text>
+                            )}
+                        </View>
+                    </BottomSheetView>
+                </BottomSheet>
+
+                {/* Bottom Sheet */}
+                {/*<BottomSheet*/}
+                {/*    ref={bottomSheetRef}*/}
+                {/*    index={-1} // Fechado por padrão*/}
+                {/*    snapPoints={['25%', '50%']} // Altura do Bottom Sheet*/}
+                {/*    enablePanDownToClose*/}
+                {/*>*/}
+                {/*    <BottomSheetView style={styles.contentContainer}>*/}
+                {/*        <View style={styles.bottomSheetContent}>*/}
+                {/*            {selectedCharger ? (*/}
+                {/*                <>*/}
+                {/*                    <Text style={styles.chargerTitle}>{selectedCharger.title}</Text>*/}
+                {/*                    <Text style={styles.chargerDetails}>Status: Disponível</Text>*/}
+                {/*                    <Text style={styles.chargerDetails}>Distância: 1.2 km</Text>*/}
+
+                {/*                    /!* Botões *!/*/}
+                {/*                    <Button*/}
+                {/*                        style={styles.button}*/}
+                {/*                        appearance="outline"*/}
+                {/*                        onPress={() => alert('Abrir no Waze (a ser implementado)')}*/}
+                {/*                    >*/}
+                {/*                        Navegar no Waze*/}
+                {/*                    </Button>*/}
+                {/*                    <Button*/}
+                {/*                        style={styles.button}*/}
+                {/*                        onPress={() => {*/}
+                {/*                            closeBottomSheet(); // Fecha o Bottom Sheet*/}
+                {/*                            navigation.navigate('ChargerDetails', { chargerId: selectedCharger.id });*/}
+                {/*                        }}*/}
+                {/*                    >*/}
+                {/*                        Ver Detalhes*/}
+                {/*                    </Button>*/}
+                {/*                </>*/}
+                {/*            ) : (*/}
+                {/*                <Text>Nenhum carregador selecionado.</Text>*/}
+                {/*            )}*/}
+                {/*        </View>*/}
+                {/*    </BottomSheetView>*/}
+
+                {/*</BottomSheet>*/}
+
+                {/*<BottomSheet*/}
+                {/*    ref={bottomSheetRef}*/}
+                {/*    onChange={handleSheetChanges}*/}
+                {/*>*/}
+                {/*    <BottomSheetView style={styles.contentContainer}>*/}
+                {/*        <Text>Awesome 🎉</Text>*/}
+                {/*    </BottomSheetView>*/}
+                {/*</BottomSheet>*/}
+            </View>
+        </GestureHandlerRootView>
+
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  logo: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  icons: {
-    flexDirection: 'row',
-    gap: 16,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    margin: 16,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-  },
-  mapContainer: {
-    flex: 1,
-    backgroundColor: '#eee',
-  },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-  },
-  legend: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: 8,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
+    container: {flex: 1},
+    map: {flex: 1},
+    bottomSheetContent: {flex: 1, padding: 16},
+    chargerTitle: {fontSize: 18, fontWeight: 'bold', marginBottom: 8},
+    chargerDetails: {fontSize: 14, marginBottom: 8, color: '#6b6b6b'},
+    button: {marginVertical: 8},
+    contentContainer: {
+        flex: 1,
+        padding: 36,
+        alignItems: 'center',
+    },
 });
 
-export default HomeScreen;
+export default HomeScreen

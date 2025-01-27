@@ -11,8 +11,7 @@ import firebase from '@react-native-firebase/app';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
-import HomeScreen from './src/screens/HomeScreen';
-import ChargerDetailsScreen from './src/screens/charger/ChargerDetailsScreen';
+import ChargerDetailsScreenBkp from './src/screens/charger/ChargerDetailsScreen-bkp';
 import ChargingScreen from './src/screens/charger/ChargingScreen';
 import PaymentScreen from './src/screens/payment/PaymentScreen';
 import PaymentOptionsScreen from './src/screens/payment/PaymentOptionsScreen';
@@ -25,6 +24,16 @@ import EditProfileScreen from './src/screens/profile/EditProfileScreen';
 import DetailPaymentScreen from './src/screens/payment/DetailPaymentScreen';
 import DetailSuccessfulScreen from './src/screens/payment/DetailSuccessfulScreen';
 import SplashScreen from './src/screens/SplashScreen';
+import {ChargerDetailsScreen} from "./src/screens/charger/ChargerDetailsScreen";
+import {ChargingModesScreen} from "./src/screens/charger/ChargingModesScreen";
+import {FastModeScreen} from "./src/screens/charger/FastModeScreen";
+import {TimeReservationScreen } from "./src/screens/charger/TimeReservationScreen";
+import {ChargingProgressScreen} from "./src/screens/charger/ChargingProgressScreen";
+import HomeScreen from "./src/screens/HomeScreen";
+import {CapacityReservationScreen} from "./src/screens/charger/CapacityReservationScreen";
+import {ChargingMonitorScreen} from "./src/screens/charger/ChargingMonitorScreen";
+import {ChargerProvider} from "./src/context/ChargerContext";
+import {ChargingSummaryScreen} from "./src/screens/payment/ChargingSummaryScreen";
 
 const Stack = createStackNavigator();
 
@@ -38,6 +47,7 @@ const App = () => {
       <AuthProvider>
         <IconRegistry icons={EvaIconsPack} />
         <ApplicationProvider {...eva} theme={eva.light}>
+          <ChargerProvider>
           <NavigationContainer>
             <Stack.Navigator screenOptions={{headerShown: false}}>
               <Stack.Screen name="SPLASH" component={SplashScreen} />
@@ -46,7 +56,8 @@ const App = () => {
               <Stack.Screen name="LOGIN" component={LoginScreen} />
               <Stack.Screen name="SIGNUP" component={SignupScreen} />
               <Stack.Screen name="HOME" component={HomeScreen} />
-              <Stack.Screen name="CHARGER" component={ChargerDetailsScreen} />
+              <Stack.Screen name="CHARGER" component={ChargerDetailsScreenBkp} />
+              <Stack.Screen name="ChargerDetails" component={ChargerDetailsScreen} />
               <Stack.Screen name="CHARGING" component={ChargingScreen} />
               <Stack.Screen name="Payment" component={PaymentScreen} />
               <Stack.Screen
@@ -67,8 +78,18 @@ const App = () => {
               <Stack.Screen name="PROFILE" component={ProfileScreen} />
               <Stack.Screen name="CARDLIST" component={CardListScreen} />
               <Stack.Screen name="EDIT_PROFILE" component={EditProfileScreen} />
+
+
+              <Stack.Screen name="ChargingModes" component={ChargingModesScreen} />
+              <Stack.Screen name="FastMode" component={FastModeScreen} />
+              <Stack.Screen name="TimeReservation" component={TimeReservationScreen} />
+              <Stack.Screen name="ChargingProgress" component={ChargingProgressScreen} />
+              <Stack.Screen name="CapacityReservation" component={CapacityReservationScreen} />
+              <Stack.Screen name="ChargingMonitor" component={ChargingMonitorScreen} />
+              <Stack.Screen name="ChargingSummary" component={ChargingSummaryScreen} />
             </Stack.Navigator>
           </NavigationContainer>
+          </ChargerProvider>
         </ApplicationProvider>
       </AuthProvider>
     </>

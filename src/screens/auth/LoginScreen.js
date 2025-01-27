@@ -1,264 +1,185 @@
-import React, {useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-  Image,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, { useContext, useState } from 'react';
+import { StyleSheet, Image, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {colors} from '../../utils/colors';
-import {fonts} from '../../utils/fonts';
-import {
-  Layout,
-  TopNavigation,
-  Input,
-  Button,
-  Icon,
-  TopNavigationAction,
-  Modal,
-  Card,
-  Spinner,
-} from '@ui-kitten/components';
-import {AuthContext} from '../../context/AuthContext';
+import { Layout, Input, Button, Text, Icon, Modal, Card, Spinner } from '@ui-kitten/components';
+import { AuthContext } from '../../context/AuthContext';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
-  const {isLoggedIn, user, loginContext} = useContext(AuthContext);
-  const [visible, setVisible] = React.useState(false);
-
-  const handleSignup = () => {
-    navigation.navigate('SIGNUP');
-  };
+  const { loginContext } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const login = async () => {
-    setVisible(true);
+    setLoading(true);
     try {
-      const usersCollection = firestore().collection('users');
-      const userSnapshot = await usersCollection
-        .where('email', '==', email)
-        .where('password', '==', password)
-        .get();
+      const userSnapshot = await firestore()
+          .collection('users')
+          .where('email', '==', email)
+          .where('password', '==', password)
+          .get();
 
       if (!userSnapshot.empty) {
         const userData = userSnapshot.docs[0].data();
-        await loginContext(userData); // Pass userData to loginContext
-        setVisible(false);
-
+        await loginContext(userData);
+        setLoading(false);
         navigation.navigate('HOME');
       } else {
-        setVisible(false);
-
+        setLoading(false);
         Alert.alert('Erro', 'Email ou senha incorretos');
       }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
-      setVisible(false);
+      setLoading(false);
       Alert.alert('Erro', 'Não foi possível fazer login');
     }
   };
 
-  const BackIcon = props => (
-    <Icon onPress={() => navigation.goBack()} {...props} name="arrow-back" />
-  );
-  const BackAction = () => <TopNavigationAction icon={BackIcon} />;
+  const loginWithGoogle = () => {
+    Alert.alert('Login com Google em desenvolvimento.');
+  };
+
+  const loginWithApple = () => {
+    Alert.alert('Login com Apple em desenvolvimento.');
+  };
 
   return (
-    <Layout style={styles.container}>
-      <TopNavigation
-        // accessoryLeft={BackAction}
-        title="Bem-vindo de volta!"
-        alignment="center"
-        style={{fontWeight: 'bold'}}
-      />
+      <Layout style={styles.container}>
+        {/* Logo */}
+        <Layout style={styles.logoContainer}>
+          <Image
+              source={require('../../assets/logo-sol-fort.png')}
+              style={styles.logo}
+          />
+        </Layout>
 
-      <Layout style={styles.containerLogo}>
-        <Image
-          source={require('../../assets/logo-sol-fort.png')}
-          style={styles.logo}
-        />
+        {/* Formulário */}
+        <Layout style={styles.formContainer}>
+          <Input
+              label="E-mail"
+              placeholder="Digite seu e-mail"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+              style={styles.input}
+          />
+          <Input
+              label="Senha"
+              placeholder="Digite sua senha"
+              secureTextEntry={secureEntry}
+              value={password}
+              onChangeText={setPassword}
+              style={styles.input}
+          />
+
+          <Button
+              style={styles.loginButton}
+              onPress={login}
+          >
+            Entrar
+          </Button>
+
+          <Button
+              appearance="ghost"
+              status="basic"
+              style={styles.continueButton}
+              onPress={() => navigation.navigate('HOME')}
+          >
+            Continuar sem login
+          </Button>
+
+          {/* Opções de Login com Redes Sociais */}
+          <Text style={styles.orText}>ou continue com</Text>
+          <Layout style={styles.socialButtons}>
+            <Button
+                appearance="ghost"
+                accessoryLeft={(props) => <Icon {...props} name="google-outline" />}
+                style={styles.socialButton}
+                onPress={loginWithGoogle}
+            >
+              Google
+            </Button>
+            <Button
+                appearance="ghost"
+                accessoryLeft={(props) => <Icon {...props} name="car-outline" />}
+                style={styles.socialButton}
+                onPress={loginWithApple}
+            >
+              Apple
+            </Button>
+          </Layout>
+        </Layout>
+
+        {/* Footer */}
+        <Layout style={styles.footerContainer}>
+          <Text>Não tem uma conta?</Text>
+          <Button appearance="ghost" onPress={() => navigation.navigate('SIGNUP')}>
+            Cadastre-se
+          </Button>
+        </Layout>
+
+        {/* Modal de Loading */}
+        <Modal visible={loading} backdropStyle={styles.backdrop}>
+          <Card disabled>
+            <Spinner />
+          </Card>
+        </Modal>
       </Layout>
-
-      <View style={styles.formContainer}>
-        <Input
-          label={'E-mail'}
-          placeholder="Entre  com seu e-mail"
-          placeholderTextColor={colors.secondary}
-          keyboardType="email-address"
-          style={{marginBottom: 30, backgroundColor: 'white'}}
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          label={'Senha'}
-          placeholder="Entre com sua senha"
-          placeholderTextColor={colors.secondary}
-          secureTextEntry={secureEntry}
-          style={{marginBottom: 5, backgroundColor: 'white'}}
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TouchableOpacity>
-          <Text style={styles.forgotPasswordText}>Esqueceu a Senha?</Text>
-        </TouchableOpacity>
-
-        <Button
-          size="large"
-          status="primary"
-          style={{marginTop: 20}}
-          onPress={login}>
-          Entrar
-        </Button>
-
-        <Button
-          style={[styles.button, {marginTop: 20}]}
-          appearance="ghost"
-          status="basic"
-          onPress={() => navigation.navigate('HOME')}>
-          Continuar sem login
-        </Button>
-      </View>
-
-      <View style={styles.footerContainer}>
-        <Text style={styles.accountText}>Não tem uma conta?</Text>
-        <TouchableOpacity onPress={handleSignup}>
-          <Text style={styles.signupText}>Cadastre-se</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        visible={visible}
-        backdropStyle={styles.backdrop}
-        onBackdropPress={() => setVisible(false)}>
-        <Card disabled={true}>
-          <Spinner />
-        </Card>
-      </Modal>
-    </Layout>
   );
 };
-
-export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
     justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    // backgroundColor: '#F7F9FC',
   },
-  backdrop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  containerLogo: {
-    alignItems: 'center'
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 40,
+    // backgroundColor: '#F7F9FC',
   },
   logo: {
-    height: 50,
-    width: 150,
-    marginVertical: 0,
-  },
-
-  backButtonWrapper: {
-    height: 40,
-    width: 40,
-    backgroundColor: colors.gray,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textContainer: {
-    marginVertical: 20,
-  },
-  headingText: {
-    fontSize: 32,
-    color: colors.primary,
-    fontFamily: fonts.SemiBold,
+    height: 60,
+    width: 160,
   },
   formContainer: {
-    padding: 20,
-    paddingTop: 0
+    padding: 16,
   },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: colors.secondary,
-    borderRadius: 7,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 2,
-    marginVertical: 10,
+  input: {
+    marginBottom: 16,
   },
-  textInput: {
-    flex: 1,
-    paddingHorizontal: 10,
-    fontFamily: fonts.Light,
+  loginButton: {
+    marginVertical: 12,
   },
-  forgotPasswordText: {
-    textAlign: 'right',
-    color: colors.primary,
-    fontFamily: fonts.SemiBold,
-    marginVertical: 10,
+  continueButton: {
+    marginVertical: 12,
   },
-  loginButtonWrapper: {
-    backgroundColor: colors.primary,
-    borderRadius: 7,
-    marginTop: 20,
-  },
-  loginText: {
-    color: colors.white,
-    fontSize: 20,
-    fontFamily: fonts.SemiBold,
+  orText: {
     textAlign: 'center',
-    padding: 10,
+    marginVertical: 12,
   },
-  continueText: {
-    textAlign: 'center',
-    marginVertical: 20,
-    fontSize: 14,
-    fontFamily: fonts.Regular,
-    color: colors.primary,
-  },
-  googleButtonContainer: {
+  socialButtons: {
     flexDirection: 'row',
-    borderWidth: 2,
-    borderColor: colors.primary,
-    borderRadius: 7,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 10,
+    justifyContent: 'space-around',
+    marginBottom: 16,
   },
-  googleText: {
-    fontSize: 20,
-    fontFamily: fonts.SemiBold,
+  socialButton: {
+    flex: 0.48,
   },
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
-    gap: 5,
+    marginVertical: 16,
   },
-  accountText: {
-    color: colors.primary,
-    fontFamily: fonts.Regular,
-  },
-  signupText: {
-    color: colors.primary,
-    fontFamily: fonts.Bold,
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
+
+export default LoginScreen;

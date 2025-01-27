@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
-import { Text, Button, Layout } from '@ui-kitten/components'; // UI Kitten components
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Layout, Text, Button, Icon } from '@ui-kitten/components';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../context/AuthContext';
-import { colors } from '../utils/colors'; // Manter suas cores, se necessário
+import { colors } from '../utils/colors';
 
 const WelcomeScreen = () => {
     const navigation = useNavigation();
@@ -11,50 +11,82 @@ const WelcomeScreen = () => {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigation.navigate("HOME");
+            navigation.navigate('HOME');
         }
     }, [isLoggedIn, navigation]);
 
     const handleLogin = () => {
-        navigation.navigate("LOGIN");
+        navigation.navigate('LOGIN');
     };
 
     const handleSignup = () => {
-        navigation.navigate("SIGNUP");
+        navigation.navigate('SIGNUP');
+    };
+
+    const handleGoogleLogin = () => {
+        console.log('Login com Google');
+    };
+
+    const handleAppleLogin = () => {
+        console.log('Login com Apple');
     };
 
     return (
-      <Layout style={styles.container}>
-          <Image source={require("../assets/logo-sol-fort.png")} style={styles.logo} />
-          <Image source={require("../assets/3173433.jpg")} style={styles.bannerImage} />
-          <Text style={styles.title}>Seu recurso para carregamento</Text>
-          <Button
-            style={styles.button}
-            appearance="ghost"
-            status="basic"
-            onPress={() => navigation.navigate("HOME")}
-          >
-              Continuar sem login
-          </Button>
+        <Layout style={styles.container}>
+            {/* Logo */}
+            <Image source={require('../assets/logo-sol-fort.png')} style={styles.logo} />
 
-          <View style={styles.buttonContainer}>
+            {/* Banner */}
+            <Image source={require('../assets/3173433.jpg')} style={styles.bannerImage} />
 
-              <Button
-                style={styles.button}
-                onPress={handleSignup}
-              >
-                  Crie uma conta
-              </Button>
+            {/* Título */}
+            <Text category="h5" style={styles.title}>
+                O seu recurso para carregamento
+            </Text>
+
+            {/* Botões Login e Cadastro */}
+            <View style={styles.authContainer}>
+                <Button style={styles.authButton} onPress={handleLogin}>
+                    Login
+                </Button>
+
+                <TouchableOpacity onPress={handleSignup}>
+                    <Text style={styles.signupText}>Criar conta</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* Botões de Redes Sociais */}
+            <View style={styles.socialButtonsContainer}>
+                <Button
+                    style={[styles.socialButton, styles.googleButton]}
+                    appearance="outline"
+                    accessoryLeft={(props) => <Icon {...props} name="google-outline" />}
+                    onPress={handleGoogleLogin}
+                >
+                    Google
+                </Button>
+
+                <Button
+                    style={[styles.socialButton, styles.appleButton]}
+                    appearance="outline"
+                    accessoryLeft={(props) => <Icon {...props} name="car-outline" />}
+                    onPress={handleAppleLogin}
+                >
+                    Apple
+                </Button>
+            </View>
+
+            {/* Botão Continuar sem Login */}
+            <Button
+                style={styles.continueButton}
+                appearance="ghost"
+                onPress={() => navigation.navigate('HOME')}
+            >
+                Continuar sem login
+            </Button>
 
 
-              <TouchableOpacity onPress={handleLogin}>
-                  <Text style={{ textAlign: 'center', color: colors.primary, marginTop: 10 }}>
-                      Já tem uma conta? Entrar
-                  </Text>
-              </TouchableOpacity>
-
-          </View>
-      </Layout>
+        </Layout>
     );
 };
 
@@ -66,6 +98,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: 20,
     },
     logo: {
         height: 50,
@@ -82,13 +115,51 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.primary,
         marginBottom: 20,
+        textAlign: 'center',
     },
-    buttonContainer: {
-        width: '80%',
-        marginTop: 10,
+    socialButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '90%',
+        marginBottom: 20,
     },
-    button: {
-        marginVertical: 10,
+    socialButton: {
+        flex: 1,
+        marginHorizontal: 5,
         borderRadius: 5,
+        // height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    googleButton: {
+        borderColor: '#DB4437',
+    },
+    appleButton: {
+        borderColor: '#000000',
+    },
+    continueButton: {
+        marginBottom: 20,
+        alignSelf: 'center',
+    },
+    authContainer: {
+        alignItems: 'center',
+        marginTop: 10,
+        width: '100%',
+        marginBottom: 50,
+    },
+    authButton: {
+        width: '90%',
+        borderRadius: 5,
+        height: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primary,
+        marginBottom: 10,
+    },
+    signupText: {
+        color: colors.primary,
+        fontWeight: 'bold',
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
