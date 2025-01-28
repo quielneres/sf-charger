@@ -1,10 +1,13 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useContext, useMemo, useRef, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {StyleSheet, View, Text} from 'react-native';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {Button} from '@ui-kitten/components';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {id} from "@gorhom/bottom-sheet/lib/typescript/utilities/id";
+import BottomMenu from "./layout/BottomMenu";
+import {AuthContext} from "../context/AuthContext";
+import MapScreen from "./MapScreen";
 
 
 const chargers = [
@@ -16,6 +19,13 @@ const HomeScreen = ({navigation}) => {
     const bottomSheetRef = useRef(null); // Referência para o Bottom Sheet
     const [selectedCharger, setSelectedCharger] = useState(null)
 
+    const { isLoggedIn } = useContext(AuthContext);
+
+    const handleLogin = () => {
+        isLoggedIn ? navigation.navigate('PROFILE') : navigation.navigate('LOGIN');
+    };
+
+    const [activeTab, setActiveTab] = useState('map');
 
     // hooks
     const sheetRef = useRef(null);
@@ -68,6 +78,7 @@ const HomeScreen = ({navigation}) => {
                 {/*    {chargers.map((charger) => (*/}
                 {/*        <Marker*/}
                 {/*            key={charger.id}*/}
+
                 {/*            coordinate={{ latitude: charger.latitude, longitude: charger.longitude }}*/}
                 {/*            title={charger.title}*/}
                 {/*            onPress={() => handleMarkerPress(charger)}*/}
@@ -75,26 +86,28 @@ const HomeScreen = ({navigation}) => {
                 {/*    ))}*/}
                 {/*</MapView>*/}
 
-
-                <View style={styles.mapContainer}>
-                    {chargers.map((charger, index) => (
-                        <Button
-                            key={charger.id || index}
-                            title=""
-                            onPress={() => handleMarkerPress(charger)}
-                        >
-                            Ir para o Carregador
-                        </Button>
-                    ))}
+                <MapScreen />
 
 
-                    {/*<Button*/}
-                    {/*    title=""*/}
-                    {/*    onPress={navigation.navigate('PROFILE')}*/}
-                    {/*>*/}
-                    {/*   Perfil*/}
-                    {/*</Button>*/}
-                </View>
+                {/*<View style={styles.mapContainer}>*/}
+                {/*    {chargers.map((charger, index) => (*/}
+                {/*        <Button*/}
+                {/*            key={charger.id || index}*/}
+                {/*            title=""*/}
+                {/*            onPress={() => handleMarkerPress(charger)}*/}
+                {/*        >*/}
+                {/*            Ir para o Carregador*/}
+                {/*        </Button>*/}
+                {/*    ))}*/}
+
+
+                {/*    /!*<Button*!/*/}
+                {/*    /!*    title=""*!/*/}
+                {/*    /!*    onPress={navigation.navigate('PROFILE')}*!/*/}
+                {/*    /!*>*!/*/}
+                {/*    /!*   Perfil*!/*/}
+                {/*    /!*</Button>*!/*/}
+                {/*</View>*/}
 
 
                 {/*<Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />*/}
@@ -102,7 +115,7 @@ const HomeScreen = ({navigation}) => {
                 {/*<Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />*/}
                 {/*<Button title="Close" onPress={() => handleClosePress()} />*/}
 
-
+                <BottomMenu activeTab={activeTab} setActiveTab={setActiveTab} handleLogin={handleLogin} />
 
                 <BottomSheet
                     ref={sheetRef}
@@ -144,55 +157,6 @@ const HomeScreen = ({navigation}) => {
                     </BottomSheetView>
                 </BottomSheet>
 
-                {/* Bottom Sheet */}
-                {/*<BottomSheet*/}
-                {/*    ref={bottomSheetRef}*/}
-                {/*    index={-1} // Fechado por padrão*/}
-                {/*    snapPoints={['25%', '50%']} // Altura do Bottom Sheet*/}
-                {/*    enablePanDownToClose*/}
-                {/*>*/}
-                {/*    <BottomSheetView style={styles.contentContainer}>*/}
-                {/*        <View style={styles.bottomSheetContent}>*/}
-                {/*            {selectedCharger ? (*/}
-                {/*                <>*/}
-                {/*                    <Text style={styles.chargerTitle}>{selectedCharger.title}</Text>*/}
-                {/*                    <Text style={styles.chargerDetails}>Status: Disponível</Text>*/}
-                {/*                    <Text style={styles.chargerDetails}>Distância: 1.2 km</Text>*/}
-
-                {/*                    /!* Botões *!/*/}
-                {/*                    <Button*/}
-                {/*                        style={styles.button}*/}
-                {/*                        appearance="outline"*/}
-                {/*                        onPress={() => alert('Abrir no Waze (a ser implementado)')}*/}
-                {/*                    >*/}
-                {/*                        Navegar no Waze*/}
-                {/*                    </Button>*/}
-                {/*                    <Button*/}
-                {/*                        style={styles.button}*/}
-                {/*                        onPress={() => {*/}
-                {/*                            closeBottomSheet(); // Fecha o Bottom Sheet*/}
-                {/*                            navigation.navigate('ChargerDetails', { chargerId: selectedCharger.id });*/}
-                {/*                        }}*/}
-                {/*                    >*/}
-                {/*                        Ver Detalhes*/}
-                {/*                    </Button>*/}
-                {/*                </>*/}
-                {/*            ) : (*/}
-                {/*                <Text>Nenhum carregador selecionado.</Text>*/}
-                {/*            )}*/}
-                {/*        </View>*/}
-                {/*    </BottomSheetView>*/}
-
-                {/*</BottomSheet>*/}
-
-                {/*<BottomSheet*/}
-                {/*    ref={bottomSheetRef}*/}
-                {/*    onChange={handleSheetChanges}*/}
-                {/*>*/}
-                {/*    <BottomSheetView style={styles.contentContainer}>*/}
-                {/*        <Text>Awesome 🎉</Text>*/}
-                {/*    </BottomSheetView>*/}
-                {/*</BottomSheet>*/}
             </View>
         </GestureHandlerRootView>
 

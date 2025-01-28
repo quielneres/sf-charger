@@ -1,8 +1,12 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Layout, Text, Icon } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
+import {useCharger} from "../context/ChargerContext";
 
 export const ChargerStatus = ({ status }) => {
+
+
+
     const getStatusColor = () => {
         switch (status) {
             case 'Charging': return '#34C759';
@@ -12,11 +16,20 @@ export const ChargerStatus = ({ status }) => {
         }
     };
 
+    const getText = () => {
+        switch (status) {
+            case 'Charging': return 'Carregando';
+            case 'Idle': return 'Parado';
+            case 'Error': return 'Indisponível';
+            default: return '';
+        }
+    };
+
     return (
         <Layout style={[styles.container, { borderColor: getStatusColor() }]}>
             <Icon style={styles.icon} fill={getStatusColor()} name="car-outline" />
             <Text category="h6" style={{ color: getStatusColor() }}>
-                {status}
+                {getText()}
             </Text>
         </Layout>
     );

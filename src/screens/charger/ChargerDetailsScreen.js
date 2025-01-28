@@ -26,7 +26,7 @@ export const ChargerDetailsScreen = ({ navigation, route }) => {
 
     return (
         <Layout style={styles.container}>
-            <Header title={`Charger: ${chargerId}`} onBackPress={() => navigation.goBack()} />
+            <Header title={`Carregador: ${chargerId}`} onBackPress={() => navigation.goBack()} />
 
             {/* Status do Carregador */}
             <ChargerStatus status={status} />

@@ -17,16 +17,16 @@ export const CapacityReservationScreen = ({ navigation }) => {
 
     return (
         <Layout style={styles.container}>
-            <Header title="Capacity Reservation" onBackPress={() => navigation.goBack()} />
-            <Text category="h6" style={styles.label}>Capacity (kWh)</Text>
+            <Header title="Reserva de capacidade" onBackPress={() => navigation.goBack()} />
+            <Text category="h6" style={styles.label}>Capacidade (kWh)</Text>
             <Input
                 style={styles.input}
-                placeholder="Enter desired capacity (e.g., 50)"
+                placeholder="Insira a capacidade desejada (por exemplo, 50)"
                 value={capacity}
                 onChangeText={setCapacity}
             />
             <Button style={styles.button} onPress={handleSave}>
-                Save Reservation
+                Salvar reserva
             </Button>
         </Layout>
     );

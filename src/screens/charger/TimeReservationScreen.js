@@ -18,23 +18,23 @@ export const TimeReservationScreen = ({ navigation }) => {
 
     return (
         <Layout style={styles.container}>
-            <Header title="Time Reservation" onBackPress={() => navigation.goBack()} />
-            <Text category="h6" style={styles.label}>Start Time</Text>
+            <Header title="Reserva de horário" onBackPress={() => navigation.goBack()} />
+            <Text category="h6" style={styles.label}>Hora de início</Text>
             <Input
                 style={styles.input}
-                placeholder="Enter start time (e.g., 18:00)"
+                placeholder="Insira a hora de início (por exemplo, 18:00)"
                 value={startTime}
                 onChangeText={setStartTime}
             />
-            <Text category="h6" style={styles.label}>End Time</Text>
+            <Text category="h6" style={styles.label}>Hora de término</Text>
             <Input
                 style={styles.input}
-                placeholder="Enter end time (e.g., 20:00)"
+                placeholder="Insira o horário de término (por exemplo, 20h)"
                 value={endTime}
                 onChangeText={setEndTime}
             />
             <Button style={styles.button} onPress={handleSave}>
-                Save Reservation
+                Salvar reserva
             </Button>
         </Layout>
     );

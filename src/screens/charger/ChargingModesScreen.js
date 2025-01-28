@@ -7,23 +7,23 @@ import {InfoCard} from "./InfoCard";
 export const ChargingModesScreen = ({ navigation }) => {
     return (
         <Layout style={styles.container}>
-            <Header title="Charging Modes" onBackPress={() => navigation.goBack()} />
+            <Header title="Modos de carregamento" onBackPress={() => navigation.goBack()} />
             {/* Modos de Carregamento */}
             <InfoCard
-                title="Fast Mode"
-                description="Charge directly with maximum power."
+                title="Modo rápido"
+                description="Carregue diretamente com potência máxima."
                 iconName="flash-outline"
                 onPress={() => navigation.navigate('FastMode')}
             />
             <InfoCard
-                title="Time Reservation"
-                description="Schedule your charging session."
+                title="Reserva de horário"
+                description="Agende sua sessão de carregamento."
                 iconName="clock-outline"
                 onPress={() => navigation.navigate('TimeReservation')}
             />
             <InfoCard
-                title="Capacity Reservation"
-                description="Reserve a session based on capacity."
+                title="Reserva de capacidade"
+                description="Reserve uma sessão com base na capacidade."
                 iconName="battery-outline"
                 onPress={() => navigation.navigate('CapacityReservation')}
             />
