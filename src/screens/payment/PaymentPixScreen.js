@@ -1,210 +1,230 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, Button, StyleSheet, Alert, ActivityIndicator, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import axios from 'axios';
-import {useNavigation} from "@react-navigation/native";
-import {Buffer} from 'buffer';
-import Ionicons from "react-native-vector-icons/Ionicons";
-import {colors} from "../utils/colors";
-import BackButton from "../../components/BackButton"; // Importa o polyfill do buffer
+import { useNavigation } from '@react-navigation/native';
+import { Buffer } from 'buffer';
+import {
+    Layout,
+    TopNavigation,
+    TopNavigationAction,
+    Icon,
+    Text,
+    Card,
+    Button,
+    Spinner,
+} from '@ui-kitten/components';
+
+// Polyfill para o Buffer
 global.Buffer = global.Buffer || Buffer;
 
-const API_SECRET_KEY = 'sk_test_f47318ced13b44b1a987f089ea10ee63'; // Chave secreta para teste
+const API_SECRET_KEY = 'sk_test_f47318ced13b44b1a987f089ea10ee63';
 const API_BASE_URL = 'https://api.pagar.me/core/v5';
 
-const PaymentPixScreen = ({route}) => {
-    const {chargerInfo} = route.params; // Informações do carregador
+const PaymentPixScreen = ({ route }) => {
+    const { chargerInfo } = route.params;
     const [pixCode, setPixCode] = useState('');
     const [amount, setAmount] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [expiration, setExpiration] = useState('');
-
     const navigation = useNavigation();
 
-    // Gera o código PIX assim que a tela carrega
     useEffect(() => {
         generatePixPayment();
     }, []);
 
     const generatePixPayment = async () => {
         try {
-            // Faz requisição para criar o pagamento
             const response = await axios.post(
-                `${API_BASE_URL}/orders`, // Endpoint da Pagar.me
+                `${API_BASE_URL}/orders`,
                 {
-                    "items": [
+                    items: [
                         {
-                            "amount": 5000,
-                            "description":  `Carregamento - ${chargerInfo.id}`,
-                            "quantity": 1
-                        }
+                            amount: 5000,
+                            description: `Carregamento - ${chargerInfo.id}`,
+                            quantity: 1,
+                        },
                     ],
-                    "customer": {
-                        "name": "Cliente Teste",
-                        "email": "cliente@email.com",
-                        "type": "individual",
-                        "document": "111111111111",
-                        "phones": {
-                            "home_phone": {
-                                "country_code": "55",
-                                "number": "22180513",
-                                "area_code": "21"
-                            }
-                        }
+                    customer: {
+                        name: 'Cliente Teste',
+                        email: 'cliente@email.com',
+                        type: 'individual',
+                        document: '111111111111',
+                        phones: {
+                            home_phone: {
+                                country_code: '55',
+                                number: '22180513',
+                                area_code: '21',
+                            },
+                        },
                     },
-                    "payments": [
+                    payments: [
                         {
-                            "payment_method": "pix",
-                            "pix": {
-                                "expires_in": "3600"
-                            }
-                        }
-                    ]
+                            payment_method: 'pix',
+                            pix: {
+                                expires_in: '3600',
+                            },
+                        },
+                    ],
                 },
                 {
                     headers: {
-                        Authorization: 'Basic ' + Buffer.from(`${API_SECRET_KEY}:`).toString('base64'),
+                        Authorization:
+                            'Basic ' + Buffer.from(`${API_SECRET_KEY}:`).toString('base64'),
                         'Content-Type': 'application/json',
                     },
                 }
             );
 
             const paymentPix = response.data.charges[0].last_transaction.qr_code;
-            const paymentAmount = (response.data.charges[0].amount / 100).toFixed(2).replace('.', ',');
-            const paymentExpiration = new Date(response.data.charges[0].last_transaction.expires_at).toLocaleString('pt-BR');
+            const paymentAmount = (response.data.charges[0].amount / 100)
+                .toFixed(2)
+                .replace('.', ',');
+            const paymentExpiration = new Date(
+                response.data.charges[0].last_transaction.expires_at
+            ).toLocaleString('pt-BR');
 
-            setPixCode(paymentPix); // Salva o código PIX gerado
+            setPixCode(paymentPix);
             setAmount(`R$ ${paymentAmount}`);
             setExpiration(paymentExpiration);
             setLoading(false);
         } catch (err) {
-            console.error('log do erro', err);
+            console.error('Erro ao gerar PIX:', err);
             setError('Erro ao gerar código PIX. Tente novamente.');
             setLoading(false);
         }
     };
 
-    const confirmPayment = () => {
-        Alert.alert('Pagamento Confirmado!', 'Seu pagamento via PIX foi recebido com sucesso!');
-        navigation.navigate('PaymentOptions', {chargerInfo});
-    };
+    const BackIcon = (props) => (
+        <Icon {...props} name="arrow-back" onPress={() => navigation.goBack()} />
+    );
+    const BackAction = () => <TopNavigationAction icon={BackIcon} />;
 
     return (
-        <View style={styles.container}>
+        <Layout style={styles.container}>
+            <TopNavigation
+                title="Pagamento via PIX"
+                accessoryLeft={BackAction}
+                alignment="center"
+            />
+            <Layout style={styles.content}>
+                {/* Informações do Pagamento */}
+                <Card style={styles.card}>
+                    <Text category="h6" style={styles.headerText}>
+                        Falta pouco!
+                    </Text>
+                    <Text category="s1" style={styles.description}>
+                        Use o QR Code abaixo ou copie o código para realizar o pagamento.
+                    </Text>
+                    <Text category="c1" style={styles.expiration}>
+                        Vencimento: {expiration}
+                    </Text>
+                </Card>
 
-            <BackButton />
+                {/* QR Code */}
+                <Layout style={styles.qrContainer}>
+                    {loading ? (
+                        <Spinner size="large" />
+                    ) : error ? (
+                        <Text status="danger">{error}</Text>
+                    ) : (
+                        <>
+                            <QRCode value={pixCode} size={150} />
+                            <Button
+                                appearance="ghost"
+                                status="primary"
+                                style={styles.copyButton}
+                                onPress={() => {
+                                    Alert.alert('Copiado!', 'O código foi copiado para a área de transferência.');
+                                }}
+                            >
+                                Copiar Código
+                            </Button>
+                            <Text category="h6" style={styles.amount}>
+                                {amount}
+                            </Text>
+                        </>
+                    )}
+                </Layout>
 
-            <View style={styles.header}>
-                <Text style={styles.headerText}>Falta pouco!</Text>
-                <Text style={styles.description}>
-                    Use a informação abaixo para concluir o pagamento
-                </Text>
-                <Text style={styles.expiration}>Vencimento: {expiration}</Text>
-            </View>
-
-            <View style={styles.qrContainer}>
-                {loading ? (
-                    <ActivityIndicator size="large" />
-                ) : error ? (
-                    <Text style={styles.error}>{error}</Text>
-                ) : (
-                    <>
-                        <QRCode value={pixCode} size={150} />
-                        <TouchableOpacity>
-                            <Text style={styles.copyText}>Copiar</Text>
-                        </TouchableOpacity>
-                        <Text style={styles.amount}>{amount}</Text>
-                        <Text style={styles.pixText}>Pix</Text>
-                    </>
-                )}
-            </View>
-
-            <View style={styles.instructions}>
-                <Text style={styles.instructionsTitle}>Como pagar?</Text>
-                <Text style={styles.step}>
-                    1. Entre no app ou site do seu banco e escolha a opção de pagamento via Pix.
-                </Text>
-                <Text style={styles.step}>
-                    2. Escaneie o código QR ou copie e cole o código de pagamento.
-                </Text>
-                <Text style={styles.step}>
-                    3. Pronto! O pagamento será creditado na hora e você receberá um e-mail de confirmação.
-                </Text>
-            </View>
-        </View>
+                {/* Instruções */}
+                <Card style={styles.instructions}>
+                    <Text category="h6" style={styles.instructionsTitle}>
+                        Como pagar?
+                    </Text>
+                    <Text category="p1" style={styles.step}>
+                        1. Abra o app ou site do seu banco e selecione Pix.
+                    </Text>
+                    <Text category="p1" style={styles.step}>
+                        2. Escaneie o QR Code ou cole o código copiado.
+                    </Text>
+                    <Text category="p1" style={styles.step}>
+                        3. Pronto! O pagamento será confirmado na hora.
+                    </Text>
+                </Card>
+            </Layout>
+        </Layout>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#F9F9F9',
+        backgroundColor: '#F7F9FC',
     },
-    header: {
-        alignItems: 'center',
+    content: {
+        flex: 1,
+        padding: 16,
+    },
+    card: {
         marginBottom: 20,
+        borderRadius: 8,
     },
     headerText: {
-        fontSize: 18,
+        textAlign: 'center',
         fontWeight: 'bold',
-        color: '#333',
+        marginBottom: 8,
     },
     description: {
         textAlign: 'center',
-        fontSize: 16,
-        color: '#333',
-        marginVertical: 10,
+        marginBottom: 8,
+        color: '#6E6E6E',
     },
     expiration: {
-        color: 'green',
+        textAlign: 'center',
         fontWeight: 'bold',
+        color: '#34C759',
     },
     qrContainer: {
         alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginBottom: 20,
-        elevation: 5,
+        padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        marginBottom: 16,
+        elevation: 3,
     },
-    pixCode: {
+    copyButton: {
         marginTop: 10,
-        fontSize: 14,
-        color: '#666',
-    },
-    copyText: {
-        color: '#007BFF',
-        fontWeight: 'bold',
-        marginVertical: 10,
     },
     amount: {
-        fontSize: 22,
+        marginTop: 10,
+        fontSize: 20,
         fontWeight: 'bold',
-        color: '#333',
-    },
-    pixText: {
-        fontSize: 16,
-        color: '#666',
     },
     instructions: {
-        padding: 15,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        elevation: 5,
+        padding: 16,
+        borderRadius: 8,
+        elevation: 2,
     },
     instructionsTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
         marginBottom: 10,
+        fontWeight: 'bold',
     },
     step: {
-        fontSize: 14,
-        marginBottom: 8,
+        marginBottom: 6,
         color: '#333',
     },
-
 });
 
 export default PaymentPixScreen;

@@ -1,34 +1,18 @@
-// ChargerContext.js
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export const ChargerContext = createContext();
+// Criação do Contexto
+const ChargerContext = createContext();
 
+// Hook para facilitar o uso do contexto
+export const useCharger = () => useContext(ChargerContext);
+
+// Provedor do Contexto
 export const ChargerProvider = ({ children }) => {
-  const [chargers, setChargers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadChargers = async () => {
-      try {
-        // Simulação de dados (substitua pela sua lógica inicial de carregamento)
-        const mockChargers = [
-          {id: 1, name: 'Teste', latitude: -15.7942287, longitude: -47.8821658, description: 'Teste'},
-          {id: 2, name: 'Teste2', latitude: -15.7909068, longitude: -47.8790089, description: 'Teste2'}
-        ];
-        setChargers(mockChargers);
-      } catch (error) {
-        console.error("Erro ao carregar os chargers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadChargers();
-  }, []); // Executa apenas uma vez na montagem do Provider
+  const [status, setStatus] = useState('Idle'); // Estado global do carregador
 
   return (
-    <ChargerContext.Provider value={{ chargers, setChargers, loading }}>
-      {children}
-    </ChargerContext.Provider>
+      <ChargerContext.Provider value={{ status, setStatus }}>
+        {children}
+      </ChargerContext.Provider>
   );
 };

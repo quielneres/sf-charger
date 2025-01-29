@@ -1,10 +1,12 @@
 import React, {useContext, useEffect} from 'react';
-import {View, Image, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {AuthContext} from '../context/AuthContext';
+import { StyleSheet, View, Image, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import {AuthContext} from "../context/AuthContext";
 
 const SplashScreen = () => {
   const navigation = useNavigation();
+
   const {isLoggedIn} = useContext(AuthContext);
 
   useEffect(() => {
@@ -16,12 +18,13 @@ const SplashScreen = () => {
   }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require('../assets/electric-power_7402743.png')}
-        style={styles.image}
-      />
-    </View>
+      <View style={styles.container}>
+        <Image
+            source={require('../assets/logo-sol-fort.png')}
+            style={styles.logo}
+        />
+        {/*<ActivityIndicator size="large" color="#007AFF" />*/}
+      </View>
   );
 };
 
@@ -30,11 +33,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
-  image: {
-    width: 80,
-    height: 80,
+  logo: {
+    width: 150,
+    height: 60,
+    marginBottom: 20,
   },
 });
 
