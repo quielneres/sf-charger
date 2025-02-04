@@ -2,7 +2,7 @@ import React, {useCallback, useContext, useMemo, useRef, useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
 import {StyleSheet, View, Text} from 'react-native';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import {Button} from '@ui-kitten/components';
+import {Button, Icon, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {id} from "@gorhom/bottom-sheet/lib/typescript/utilities/id";
 import BottomMenu from "./layout/BottomMenu";
@@ -37,83 +37,36 @@ const HomeScreen = ({navigation}) => {
     const handleSheetChange = useCallback((index) => {
         console.log("handleSheetChange", index);
     }, []);
-    const handleSnapPress = useCallback((index) => {
-        sheetRef.current?.snapToIndex(index);
-    }, []);
-    const handleClosePress = useCallback(() => {
-        sheetRef.current?.close();
-    }, []);
 
-    const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
-    }, []);
-
-
-    const handleMarkerPress = (charger) => {
-        console.log('handle')
-        setSelectedCharger(charger); // Atualiza o estado com o carregador selecionado
-        sheetRef.current?.snapToIndex(1);
-
-        // bottomSheetRef.current?.snapToIndex(1); // Abre o Bottom Sheet
-    };
 
     const closeBottomSheet = () => {
         bottomSheetRef.current?.close(); // Fecha o Bottom Sheet
     };
 
+    const ChargerIcon = (props) => <Icon {...props}
+                                         name="list-outline" style={styles.icon}
+                                         fill='#8F9BB3'/>;
+
+    const renderEditAction = () => (
+        <TopNavigationAction
+            icon={ChargerIcon}
+            onPress={() => navigation.navigate('ChargerList')}
+        />
+    );
+
     return (
         <GestureHandlerRootView style={styles.container}>
 
             <View style={styles.container}>
-                {/* Mapa */}
-                {/*<MapView*/}
-                {/*    style={styles.map}*/}
-                {/*    initialRegion={{*/}
-                {/*        latitude: -23.55052,*/}
-                {/*        longitude: -46.633308,*/}
-                {/*        latitudeDelta: 0.05,*/}
-                {/*        longitudeDelta: 0.05,*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    {chargers.map((charger) => (*/}
-                {/*        <Marker*/}
-                {/*            key={charger.id}*/}
 
-                {/*            coordinate={{ latitude: charger.latitude, longitude: charger.longitude }}*/}
-                {/*            title={charger.title}*/}
-                {/*            onPress={() => handleMarkerPress(charger)}*/}
-                {/*        />*/}
-                {/*    ))}*/}
-                {/*</MapView>*/}
+                <TopNavigation
+                    title="Mapa"
+                    alignment="center"
+                    accessoryLeft={renderEditAction}
 
-                <MapScreen />
+                />
 
-
-                {/*<View style={styles.mapContainer}>*/}
-                {/*    {chargers.map((charger, index) => (*/}
-                {/*        <Button*/}
-                {/*            key={charger.id || index}*/}
-                {/*            title=""*/}
-                {/*            onPress={() => handleMarkerPress(charger)}*/}
-                {/*        >*/}
-                {/*            Ir para o Carregador*/}
-                {/*        </Button>*/}
-                {/*    ))}*/}
-
-
-                {/*    /!*<Button*!/*/}
-                {/*    /!*    title=""*!/*/}
-                {/*    /!*    onPress={navigation.navigate('PROFILE')}*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*   Perfil*!/*/}
-                {/*    /!*</Button>*!/*/}
-                {/*</View>*/}
-
-
-                {/*<Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />*/}
-                {/*<Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />*/}
-                {/*<Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />*/}
-                {/*<Button title="Close" onPress={() => handleClosePress()} />*/}
+                {/*<MapScreen />*/}
 
                 <BottomMenu activeTab={activeTab} setActiveTab={setActiveTab} handleLogin={handleLogin} />
 
@@ -174,6 +127,10 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 36,
         alignItems: 'center',
+    },
+    icon: {
+        width: 32,
+        height: 32,
     },
 });
 

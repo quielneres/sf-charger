@@ -11,7 +11,7 @@ import firebase from '@react-native-firebase/app';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import SignupScreen from './src/screens/auth/SignupScreen';
-import ChargerDetailsScreenBkp from './src/screens/charger/ChargerDetailsScreen-bkp';
+// import ChargerDetailsScreen from './src/screens/charger/ChargerDetailsScreen';
 import ChargingScreen from './src/screens/charger/ChargingScreen';
 import PaymentScreen from './src/screens/payment/PaymentScreen';
 import PaymentOptionsScreen from './src/screens/payment/PaymentOptionsScreen';
@@ -24,7 +24,7 @@ import EditProfileScreen from './src/screens/profile/EditProfileScreen';
 import DetailPaymentScreen from './src/screens/payment/DetailPaymentScreen';
 import DetailSuccessfulScreen from './src/screens/payment/DetailSuccessfulScreen';
 import SplashScreen from './src/screens/SplashScreen';
-import {ChargerDetailsScreen} from "./src/screens/charger/ChargerDetailsScreen";
+// import {ChargerDetailsScreen} from "./src/screens/charger/ChargerDetailsScreen";
 import {ChargingModesScreen} from "./src/screens/charger/ChargingModesScreen";
 import {FastModeScreen} from "./src/screens/charger/FastModeScreen";
 import {TimeReservationScreen } from "./src/screens/charger/TimeReservationScreen";
@@ -34,6 +34,8 @@ import {CapacityReservationScreen} from "./src/screens/charger/CapacityReservati
 import {ChargingMonitorScreen} from "./src/screens/charger/ChargingMonitorScreen";
 import {ChargerProvider} from "./src/context/ChargerContext";
 import {ChargingSummaryScreen} from "./src/screens/payment/ChargingSummaryScreen";
+import ChargerListScreen from "./src/screens/charger/ChargerListScreen";
+import ChargerDetailsScreen from "./src/screens/charger/ChargerDetailsScreen";
 
 const Stack = createStackNavigator();
 
@@ -56,7 +58,7 @@ const App = () => {
               <Stack.Screen name="LOGIN" component={LoginScreen} />
               <Stack.Screen name="SIGNUP" component={SignupScreen} />
               <Stack.Screen name="HOME" component={HomeScreen} />
-              <Stack.Screen name="CHARGER" component={ChargerDetailsScreenBkp} />
+              {/*<Stack.Screen name="CHARGER" component={ChargerDetailsScreen} />*/}
               <Stack.Screen name="ChargerDetails" component={ChargerDetailsScreen} />
               <Stack.Screen name="CHARGING" component={ChargingScreen} />
               <Stack.Screen name="Payment" component={PaymentScreen} />
@@ -87,6 +89,7 @@ const App = () => {
               <Stack.Screen name="CapacityReservation" component={CapacityReservationScreen} />
               <Stack.Screen name="ChargingMonitor" component={ChargingMonitorScreen} />
               <Stack.Screen name="ChargingSummary" component={ChargingSummaryScreen} />
+              <Stack.Screen name="ChargerList" component={ChargerListScreen} />
             </Stack.Navigator>
           </NavigationContainer>
           </ChargerProvider>

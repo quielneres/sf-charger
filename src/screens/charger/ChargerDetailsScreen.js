@@ -1,86 +1,221 @@
-import React, { useState } from 'react';
-import {Text, StyleSheet} from 'react-native';
-import {Button, Layout} from "@ui-kitten/components";
-import {Header} from "../../components/Header";
-import {ChargerStatus} from "../../components/ChargerStatus";
-import {InfoCard} from "../../components/InfoCard";
-import ChargerService from "../../services/ChargerService";
-import { useCharger } from '../../context/ChargerContext';
+import React, { useContext } from 'react';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../../context/AuthContext';
+import {Button, Card, Icon, Layout, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
+import chargerImage from '../../assets/charger.jpeg';
 
-export const ChargerDetailsScreen = ({ navigation, route }) => {
-    const { chargerId } = route.params; // Recebe o ID do carregador vindo do HomeScreen
-    const { status, setStatus } = useCharger(); // Status inicial do carregador
+const ChargerDetailsScreen = ({ route }) => {
+  const { chargerInfo } = route.params;
+  const navigation = useNavigation();
+  const { isLoggedIn } = useContext(AuthContext);
 
-    const handleStartCharging = () => {
-        ChargerService.startTransaction(1, 'USER_123');
-        setStatus('Charging');
-        alert('Carregamento iniciado!');
-        navigation.navigate('ChargingMonitor');
-    };
+  // console.log('charger info', chargerInfo)
 
-    const handleStopCharging = () => {
-        ChargerService.stopTransaction('TX_001', 10.5);
-        setStatus('Idle');
-        alert('Carregamento parado!');
-    };
+  const handleStartCharging = () => {
+    try {
+      if (isLoggedIn) {
+        navigation.navigate('CHARGING', { chargerInfo });
+      } else {
+        navigation.navigate('LOGIN');
+      }
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro ao iniciar o carregamento. Por favor, tente novamente.',
+      );
+      console.error('Error starting charging:', error);
+    }
+  };
 
-    return (
-        <Layout style={styles.container}>
-            <Header title={`Carregador: ${chargerId}`} onBackPress={() => navigation.goBack()} />
+  const renderAmenityIcon = (amenityName) => {
+    switch (amenityName.toLowerCase()) {
+      case 'café':
+        return 'coffee-outline';
+      case 'wifi':
+        return 'wifi-outline';
+      case 'comida':
+        return 'restaurant-outline';
+      case 'conveniencia':
+        return 'shopping-bag-outline';
+      case 'bar':
+        return 'beer-outline';
+      default:
+        return 'question-mark-outline';
+    }
+  };
 
-            {/* Status do Carregador */}
-            <ChargerStatus status={status} />
+  const BackIcon = (props) => (
+      <Icon {...props} name="arrow-back" />
+  );
 
-            {/* Botão para Navegar para Modos de Carregamento */}
-            <Button
-                style={styles.button}
-                onPress={() => navigation.navigate('ChargingModes')}
-            >
-                Selecionar Modo de Carregamento
-            </Button>
+  const BackAction = () => (
+      <TopNavigationAction icon={BackIcon} onPress={() => navigation.goBack()} />
+  );
 
-            {/* Botões de Controle de Carregamento */}
-            <Layout style={styles.buttonContainer}>
-                <Button
-                    style={[styles.actionButton, { backgroundColor: '#34C759' }]}
-                    onPress={handleStartCharging}
-                >
-                    Iniciar Carregamento (Fast Mode)
-                </Button>
-                <Button
-                    style={[styles.actionButton, { backgroundColor: '#FF3B30' }]}
-                    onPress={handleStopCharging}
-                >
-                    Parar Carregamento
-                </Button>
-            </Layout>
+  return (
+    <Layout contentContainerStyle={styles.container}>
+      <TopNavigation accessoryLeft={BackAction} title="Carregador" alignment="center" />
 
-            {/* Informações Adicionais */}
-            <Layout style={styles.infoContainer}>
-                <InfoCard
-                    title="Modelo"
-                    description="THOR-40kW"
-                    iconName="flash-outline"
-                />
-                <InfoCard
-                    title="Localização"
-                    description="Rua Principal, 101"
-                    iconName="pin-outline"
-                />
-                <InfoCard
-                    title="Última Sessão"
-                    description="2h de carregamento, 70 kWh"
-                    iconName="clock-outline"
-                />
-            </Layout>
-        </Layout>
-    );
+      <Layout>
+      <View style={styles.imageContainer}>
+        <Image source={chargerImage} style={styles.image} />
+        <Text style={styles.chargeTitle}>{chargerInfo?.description}</Text>
+      </View>
+
+
+
+      <Text style={{ marginLeft: 25, marginTop: 20 }}>
+        <Icon name="pin-outline" style={{ width: 20, height: 20, marginRight: 5, marginBottom: -3 }} fill="#000" />
+        {chargerInfo?.address}
+      </Text>
+
+
+      <Text style={{ marginLeft: 25, marginTop: 20 }}>
+        <Icon name="pin-outline" style={{ width: 20, height: 20, marginRight: 5, marginBottom: -3 }} fill="#000" />
+        42 km de distância de você <Text style={styles.routerLink}> VER ROTA</Text>
+      </Text>
+      </Layout>
+
+
+      {/*<Text style={{ fontSize: 18, marginLeft: 25, fontWeight: 'bold' }}>*/}
+      {/*  Conector*/}
+      {/*</Text>*/}
+      <Layout style={styles.topContainer} level="1">
+        <Card style={styles.chargeType} >
+          <Text style={styles.chargeTitle}>{chargerInfo.connectorType}</Text>
+          <Text style={styles.chargePower}>{chargerInfo.powerKw} kW</Text>
+          {/*{chargerInfo?.status} == Available*/}
+
+          <Text style={{ color: 'green' }}>Disponível </Text>
+        </Card>
+        <View style={styles.tariffContainer}>
+          <Text style={styles.tariffTitle}>Preço por kW: {chargerInfo?.pricePerKw?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text>
+        </View>
+      </Layout>
+
+
+
+      {/*<Button style={styles.buttonWrapper} onPress={handleStartCharging}>*/}
+      {/*  Iniciar a Recarga*/}
+      {/*</Button>*/}
+
+      {/* Botões de Controle de Carregamento */}
+      <Layout style={styles.buttonContainer}>
+        <Button
+            style={[styles.actionButton, { backgroundColor: '#34C759' }]}
+            onPress={handleStartCharging}
+        >
+          Iniciar Carregamento
+        </Button>
+      </Layout>
+    </Layout>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16 },
-    button: { marginVertical: 16 },
-    buttonContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
-    actionButton: { flex: 1, marginHorizontal: 4, borderRadius: 8 },
-    infoContainer: { marginTop: 16 },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+
+    // backgroundColor: 'white',
+  },
+  buttonContainer: { flexDirection: 'row', justifyContent: 'space-between', margin: 16 },
+  actionButton: { flex: 1, marginHorizontal: 4, borderRadius: 8 },
+
+  topContainer: {
+    // flexDirection: 'row',
+
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    margin: 15,
+    marginTop: 30,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+  },
+  location: {
+    marginTop: 8,
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#666',
+  },
+  chargeType: {
+    alignItems: 'center',
+    backgroundColor: '#e5eaf1',
+    borderTopLeftRadius: 5,
+    borderTopRightRadius: 5,
+  },
+  chargeTitle: {
+    marginTop: 30,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  chargePower: {
+    fontSize: 16,
+    marginTop: 4,
+  },
+  chargeLabel: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  amenitiesContainer: {
+    marginLeft: 25,
+    marginTop: 10,
+  },
+  amenityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  amenityIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+  },
+  amenityText: {
+    fontSize: 16,
+  },
+  tariffContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#d4d7de',
+    marginTop: -3,
+    paddingLeft: 13.5,
+    paddingRight: 13.5,
+    padding: 10,
+    alignItems: 'center',
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+
+  },
+  tariffTitle: {
+    fontSize: 12,
+    // fontWeight: 'bold',
+    // backgroundColor: 'red',
+    color: '#666',
+  },
+  link: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  buttonWrapper: {
+    margin: 20,
+  },
+  routerLink: {
+    color: '#1b61ed',
+    fontWeight: 'bold',
+  }
 });
+
+export default ChargerDetailsScreen;
