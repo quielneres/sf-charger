@@ -1,5 +1,5 @@
-import { Icon, Layout, TopNavigation, TopNavigationAction } from "@ui-kitten/components";
-import {StyleSheet, Text, TouchableOpacity} from "react-native";
+import {Card, Icon, Layout, Modal, Spinner, TopNavigation, TopNavigationAction} from "@ui-kitten/components";
+import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import React, { useEffect, useState } from "react";
 import { InfoCardCharger } from "../../components/InfoCardCharger";
 import { useNavigation } from "@react-navigation/native";
@@ -9,12 +9,15 @@ import { getChargers } from "../../services/ChargerService";
 const ChargerListScreen = () => {
     const navigation = useNavigation();
     const [chargers, setChargers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const fetchChargers = async () => {
             try {
                 const chargersData = await getChargers();
                 setChargers(chargersData);
+                setLoading(false);
             } catch (error) {
                 console.error("Erro ao buscar carregadores:", error);
             }
@@ -47,7 +50,16 @@ const ChargerListScreen = () => {
                             />
                     ))
                 ) : (
-                    <Text style={styles.noChargersText}>Nenhum carregador encontrado.</Text>
+
+                    <Modal
+                        visible={loading}
+                        backdropStyle={styles.loading}
+                    >
+                        <Card disabled={true}>
+                            <Spinner />
+                        </Card>
+                    </Modal>
+
                 )}
             </Layout>
         </Layout>
@@ -69,6 +81,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 16,
         color: "#666",
+    },
+    loading: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 
