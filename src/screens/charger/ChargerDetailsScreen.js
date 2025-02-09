@@ -1,32 +1,145 @@
-import React, { useContext } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
 import {Button, Card, Icon, Layout, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import chargerImage from '../../assets/charger.jpeg';
 
+
+
+import Geolocation from 'react-native-geolocation-service';
+import { getWalletBalance } from '../../services/WalletService';
+import ChargingValidationModal from '../../components/ChargingValidationModal';
+import StartChargingModal from "../../components/StartChargingModal";
+
 const ChargerDetailsScreen = ({ route }) => {
   const { chargerInfo } = route.params;
   const navigation = useNavigation();
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, user, logout } = useContext(AuthContext);
+
+
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [hasCard, setHasCard] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+        position => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        error => console.error("Erro ao obter localização:", error),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+
+    // Buscar saldo da carteira
+    fetchWalletBalance();
+
+  }, []);
+
+  const fetchWalletBalance = async () => {
+    try {
+      const balance = await getWalletBalance(1);
+      setWalletBalance(balance);
+    } catch (error) {
+      console.error("Erro ao buscar saldo da carteira:", error);
+    }
+  };
+
+  const confirmStartCharging = async () => {
+    setShowModal(false);
+
+    const latitude = -15.60084489;
+    const longitude = -47.6839936;
+
+    navigation.navigate('ChargingMonitor');
+
+
+
+    // const response = await startCharging(chargerInfo.serialNumber, user._id, latitude, longitude);
+    //
+    // if (response.error) {
+    //   Alert.alert("Erro", response.error);
+    // } else {
+    //   navigation.navigate('ChargingMonitor');
+    // }
+  };
+
+
 
   // console.log('charger info', chargerInfo)
 
-  const handleStartCharging = () => {
-    try {
-      if (isLoggedIn) {
-        navigation.navigate('CHARGING', { chargerInfo });
-      } else {
-        navigation.navigate('LOGIN');
-      }
-    } catch (error) {
-      Alert.alert(
-        'Erro',
-        'Ocorreu um erro ao iniciar o carregamento. Por favor, tente novamente.',
-      );
-      console.error('Error starting charging:', error);
+  const handleStartCharging = async () => {
+
+    if (!isLoggedIn) {
+      return navigation.navigate('LOGIN');
     }
+
+    setShowModal(true);
+
+    // try {
+    //   if (isLoggedIn) {
+    //     navigation.navigate('CHARGING', { chargerInfo });
+    //   } else {
+    //     navigation.navigate('LOGIN');
+    //   }
+    // } catch (error) {
+    //   Alert.alert(
+    //     'Erro',
+    //     'Ocorreu um erro ao iniciar o carregamento. Por favor, tente novamente.',
+    //   );
+    //   console.error('Error starting charging:', error);
+    // }
+    //
+    // const distance = calculateDistance(
+    //     userLocation.latitude, userLocation.longitude,
+    //     chargerInfo.latitude, chargerInfo.longitude
+    // );
+    //
+    // if (distance > 0.5) {  // Exemplo: 500m de raio permitido
+    //   Alert.alert("Você está longe do carregador!", "Aproxime-se para iniciar a recarga.");
+    //   return;
+    // }
+    //
+    // if (walletBalance < 30 && !hasCard) {
+    //   setModalVisible(true);
+    //   return;
+    // }
+    //
+    // const balance = await getWalletBalance(1);
+    // setWalletBalance(balance);
+    //
+    // if (balance < 30) {
+    //   setModalVisible(true);
+    //   return;
+    // }
+    //
+    // navigation.navigate('CHARGING', { chargerInfo });
+    //
+    // navigation.navigate('CHARGING', { chargerInfo });
   };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // Raio da Terra em km
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Retorna a distância em km
+  };
+
 
   const renderAmenityIcon = (amenityName) => {
     switch (amenityName.toLowerCase()) {
@@ -100,6 +213,8 @@ const ChargerDetailsScreen = ({ route }) => {
       {/*  Iniciar a Recarga*/}
       {/*</Button>*/}
 
+      <StartChargingModal visible={showModal} onConfirm={confirmStartCharging} onCancel={() => setShowModal(false)} />
+
       {/* Botões de Controle de Carregamento */}
       <Layout style={styles.buttonContainer}>
         <Button
@@ -109,6 +224,26 @@ const ChargerDetailsScreen = ({ route }) => {
           Iniciar Carregamento
         </Button>
       </Layout>
+
+
+      <ChargingValidationModal
+          visible={isModalVisible}
+          onClose={() => setModalVisible(false)}
+          onAddFunds={() => {
+            setModalVisible(false);
+            navigation.navigate("WalletScreen"); // Redireciona para recarga de saldo
+          }}
+          onAddCard={() => {
+            setModalVisible(false);
+            navigation.navigate("AddCardScreen"); // Redireciona para cadastro de cartão
+          }}
+          onConfirm={() => {
+            setModalVisible(false);
+            navigation.navigate('CHARGING', { chargerInfo });
+          }}
+      />
+
+
     </Layout>
   );
 };

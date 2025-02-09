@@ -2,6 +2,9 @@ import axios from "axios";
 
 const API_URL = "http://192.168.0.176:4000/api/chargers";
 
+
+
+
 export const getChargers = async () => {
     try {
         const response = await axios.get(API_URL);
@@ -22,22 +25,5 @@ export const addCharger = async (chargerData) => {
     }
 };
 
-export const startCharging = async (chargerId) => {
-    try {
-        const response = await axios.post(`${API_URL}/${chargerId}/start`);
-        return response.data;
-    } catch (error) {
-        console.error("Erro ao iniciar carregamento:", error);
-        return { error: "Falha na requisição" };
-    }
-};
 
-export const stopCharging = async (chargerId) => {
-    try {
-        const response = await axios.post(`${API_URL}/${chargerId}/stop`);
-        return response.data;
-    } catch (error) {
-        console.error("Erro ao parar carregamento:", error);
-        return { error: "Falha na requisição" };
-    }
-};
+

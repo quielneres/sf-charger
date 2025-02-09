@@ -19,14 +19,19 @@ import {
   Spinner,
 } from '@ui-kitten/components';
 
+import { register } from '../../services/AuthService';
+
 const SignupScreen = () => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
-  const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [secureEntry, setSecureEntry] = useState(true);
   const [visible, setVisible] = React.useState(false);
+  // const [loading, setLoading] = useState(false);
+
 
 
   const handleGoBack = () => {
@@ -38,24 +43,38 @@ const SignupScreen = () => {
   };
 
   const signup = async () => {
-
     setVisible(true);
-
     try {
-      const usersCollection = firestore().collection('users');
-      const userSnapshot = await usersCollection
-        .where('email', '==', email)
-        .get();
 
-      if (!userSnapshot.empty) {
-        setVisible(false);
-        Alert.alert('Erro', 'Usuário já cadastrado');
+      const response = await register(name, email, cpf, password);
+      setVisible(false);
+
+
+
+      if (response.error) {
+        Alert.alert("Erro", response.error); // 🔴 Mostra o erro específico
       } else {
-        await usersCollection.add({name, email, password});
-        setVisible(false);
-        Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
-        navigation.navigate('LOGIN');
+        // Alert.alert("Deu bom", response.error); // 🔴 Mostra o erro específico
+
+          Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
+          navigation.navigate('LOGIN');
       }
+
+
+      // const usersCollection = firestore().collection('users');
+      // const userSnapshot = await usersCollection
+      //   .where('email', '==', email)
+      //   .get();
+      //
+      // if (!userSnapshot.empty) {
+      //   setVisible(false);
+      //   Alert.alert('Erro', 'Usuário já cadastrado');
+      // } else {
+      //   await usersCollection.add({name, email, password});
+      //   setVisible(false);
+      //   Alert.alert('Sucesso', 'Usuário cadastrado com sucesso');
+      //   navigation.navigate('LOGIN');
+      // }
     } catch (error) {
       console.error('Erro ao cadastrar usuário:', error);
       setVisible(false);
@@ -78,8 +97,8 @@ const SignupScreen = () => {
         <Text style={styles.formTitle}>Criar uma conta</Text>
 
         <Input
-          label={'Nome'}
-          placeholder="Entre com seu nome"
+          label={'Nome Completo'}
+          placeholder="Entre com seu nome completo"
           style={styles.input}
           placeholderTextColor={colors.secondary}
           value={name}
@@ -87,21 +106,41 @@ const SignupScreen = () => {
         />
 
         <Input
-          label="Sobrenome"
-          placeholder="Entre com seu Sobrenome"
-          style={styles.input}
-          placeholderTextColor={colors.secondary}
-          value={lastname}
-          onChangeText={setLastname}
+            label="E-mail"
+            placeholder="Entre com seu e-mail"
+            value={email}
+            keyboardType={'email-address'}
+            style={[styles.input]}
+            onChangeText={setEmail}
         />
+
         <Input
-          label="E-mail"
-          placeholder="Entre com seu e-mail"
-          value={email}
-          keyboardType={'email-address'}
-          style={[styles.input]}
-          onChangeText={setEmail}
+            label="CPF"
+            placeholder="Entre com seu CPF"
+            value={cpf}
+            // keyboardType={'email-address'}
+            style={[styles.input]}
+            onChangeText={setCpf}
         />
+
+        <Input
+            label="Telefone"
+            placeholder="Entre com seu número de telefone"
+            value={phone}
+            // keyboardType={'email-address'}
+            style={[styles.input]}
+            onChangeText={setPhone}
+        />
+
+        {/*<Input*/}
+        {/*  label="Sobrenome"*/}
+        {/*  placeholder="Entre com seu Sobrenome"*/}
+        {/*  style={styles.input}*/}
+        {/*  placeholderTextColor={colors.secondary}*/}
+        {/*  value={lastname}*/}
+        {/*  onChangeText={setLastname}*/}
+        {/*/>*/}
+
         <Input
           label="Senha"
           placeholder="Entre com a senha"

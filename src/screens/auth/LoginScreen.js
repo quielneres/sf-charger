@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import { Layout, Input, Button, Text, Icon, Modal, Card, Spinner } from '@ui-kitten/components';
 import { AuthContext } from '../../context/AuthContext';
+import { login } from '../../services/AuthService';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -13,24 +14,49 @@ const LoginScreen = () => {
   const { loginContext } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  const login = async () => {
-    setLoading(true);
+  const handleLogin = async () => {
+    // setLoading(true);
     try {
-      const userSnapshot = await firestore()
-          .collection('users')
-          .where('email', '==', email)
-          .where('password', '==', password)
-          .get();
+      // const response = await login(email, password);
+      //
+      // console.log('login response', response);
 
-      if (!userSnapshot.empty) {
-        const userData = userSnapshot.docs[0].data();
+      setLoading(true);
+      const response = await login(email, password);
+      setLoading(false);
+
+      if (response.error) {
+        Alert.alert("Erro", response.error); // 🔴 Mostra o erro específico
+      } else {
+        console.log(response.user)
+        // Alert.alert("Deu bom", response.error); // 🔴 Mostra o erro específico
+
+        // navigation.navigate("Home", { userId: response.userId });
+
+
+
+        const userData = response.user;
         await loginContext(userData);
         setLoading(false);
         navigation.navigate('HOME');
-      } else {
-        setLoading(false);
-        Alert.alert('Erro', 'Email ou senha incorretos');
       }
+
+
+      // const userSnapshot = await firestore()
+      //     .collection('users')
+      //     .where('email', '==', email)
+      //     .where('password', '==', password)
+      //     .get();
+
+      // if (!userSnapshot.empty) {
+      //   const userData = userSnapshot.docs[0].data();
+      //   await loginContext(userData);
+      //   setLoading(false);
+      //   navigation.navigate('HOME');
+      // } else {
+      //   setLoading(false);
+      //   Alert.alert('Erro', 'Email ou senha incorretos');
+      // }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       setLoading(false);
@@ -77,7 +103,7 @@ const LoginScreen = () => {
 
           <Button
               style={styles.loginButton}
-              onPress={login}
+              onPress={handleLogin}
           >
             Entrar
           </Button>

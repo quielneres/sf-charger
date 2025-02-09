@@ -25,18 +25,18 @@ const BottomMenu = ({ activeTab, setActiveTab, handleLogin }) => {
 
       <TouchableOpacity
         style={styles.menuItem}
-        onPress={() => setActiveTab('battery')}>
+        onPress={() => navigation.navigate('Wallet')}>
         <Icon
-          name="battery-charging-outline"
+          name="wallet-outline"
           size={24}
-          color={activeTab === 'battery' ? '#007AFF' : '#808080'}
+          color={activeTab === 'wallet' ? '#007AFF' : '#808080'}
         />
         <Text
           style={[
             styles.menuText,
-            activeTab === 'battery' && styles.activeText,
+            activeTab === 'wallet' && styles.activeText,
           ]}>
-          Bateria
+          Carteira
         </Text>
       </TouchableOpacity>
 

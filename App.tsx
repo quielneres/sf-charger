@@ -36,6 +36,8 @@ import {ChargerProvider} from "./src/context/ChargerContext";
 import {ChargingSummaryScreen} from "./src/screens/payment/ChargingSummaryScreen";
 import ChargerListScreen from "./src/screens/charger/ChargerListScreen";
 import ChargerDetailsScreen from "./src/screens/charger/ChargerDetailsScreen";
+import WalletScreen from "./src/screens/profile/WalletScreen";
+import DepositScreen from "./src/screens/payment/DepositScreen";
 
 const Stack = createStackNavigator();
 
@@ -66,6 +68,7 @@ const App = () => {
                 name="PaymentOptions"
                 component={PaymentOptionsScreen}
               />
+              <Stack.Screen name="Deposit" component={DepositScreen} />
               <Stack.Screen name="PaymentPix" component={PaymentPixScreen} />
               <Stack.Screen name="AddCard" component={AddCardScreen} />
               <Stack.Screen name="SavedCards" component={SavedCardsScreen} />
@@ -78,6 +81,7 @@ const App = () => {
                 component={DetailSuccessfulScreen}
               />
               <Stack.Screen name="PROFILE" component={ProfileScreen} />
+              <Stack.Screen name="Wallet" component={WalletScreen} />
               <Stack.Screen name="CARDLIST" component={CardListScreen} />
               <Stack.Screen name="EDIT_PROFILE" component={EditProfileScreen} />
 
